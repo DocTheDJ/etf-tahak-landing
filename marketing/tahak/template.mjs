@@ -132,7 +132,7 @@ export function renderTahak(data) {
     </div>
 
     <div class="box" style="margin-top:5mm">
-      <p><b>Co dál?</b> Během příštích dní vám pošleme 4 krátké e-maily: jak vybrat brokera, jak nastavit pravidelnou investici, daně podrobněji a DIP krok za krokem. Žádné telefonáty, žádný poradce.</p>
+      <p><b>Co dál?</b> Chcete víc? Na stránce si můžete zapnout 4 krátké e-maily s tipy: jak vybrat brokera, jak nastavit pravidelnou investici, daně podrobněji a DIP krok za krokem. Jen pokud o ně stojíte. Žádné telefonáty, žádný poradce.</p>
     </div>
 
     <div class="foot">ETF tahák není investiční doporučení ani nabídka investičních služeb. Investování nese riziko ztráty. Minulé výnosy nejsou zárukou budoucích. Daňové informace jsou zjednodušené (zákon č. 586/1992 Sb. o daních z příjmů, stav 2026) a ve vaší situaci se mohou lišit.</div>

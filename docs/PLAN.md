@@ -86,3 +86,8 @@ Four directions were explored as interactive phone mockups (live trading termina
 | Motion | Almost none | Scrolling ticker tape of the real pairs (sticky), pulsing live-data dot, blinking cursor on the loss, bars and the loss number re-animate on every tap, order-book rows slide in, the cheaper twin flashes |
 
 All motion is CSS and stops for visitors with "reduce motion" enabled.
+
+## Fourth iteration: email effects and GDPR consent
+
+- Email field: a running lime border until the address is valid, then solid lime + ✓. Buttons (submit when valid, 🔒 Odemknout): a light sweep, staggered and paused off-screen. Chosen from three interactive variants on the design canvas.
+- The 4 tips emails were described as "part of the cheat sheet" without consent, a grey zone under Czech Act 480/2004 §7. They're now a separate, explicit opt-in on the thank-you panel ("Ano, chci tipy" / "Ne, stačí mi PDF"). The consent is stored with timestamp, versioned wording and the exact text (`src/lib/consent.ts`). The PDF still needs only the email.

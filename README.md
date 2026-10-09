@@ -35,7 +35,7 @@ The copy talks to that person: Czech, "vy", concrete numbers, no jargon without 
 3. **Czech taxes on one page**: 3-year time test (no 40M cap since 2026), 100,000 CZK yearly exemption, accumulating vs distributing, W-8BEN, DIP deduction up to 48,000 CZK, US estate-tax risk.
 4. **5 steps to the first purchase** + what to watch out for.
 
-Plus a short follow-up sequence (4 emails: choosing a broker → standing order → taxes in depth → DIP step by step).
+Optionally, a short tips sequence (4 emails: choosing a broker → standing order → taxes in depth → DIP step by step), sent **only to visitors who opt in** after the download (see §3a).
 
 **The value is visible before the form:**
 - Ad A visitors see **their own loss number** in the first screen (e.g. *−466,000 CZK over 20 years*).
@@ -54,12 +54,22 @@ Plus a short follow-up sequence (4 emails: choosing a broker → standing order 
 
 **After submitting:**
 - **Instant value, no inbox needed:** "HOTOVO · Tahák je váš." ("DONE · The cheat sheet is yours.") + download button. All twins in the table **unlock in place** (highlight animation). Email delivery is a bonus, not the gate.
+- **Separate opt-in for the tips emails** (GDPR / Czech Act 480/2004): *"Chcete k taháku i 4 krátké tipy e-mailem?"* ("Want 4 short tips by email too?") with the full consent sentence, **"Ano, chci tipy"** ("Yes, I want the tips") or **"Ne, stačí mi PDF"** ("No, the PDF is enough"). See §3a.
 - **Progressive profiling** (optional, one tap): *"Kolik měsíčně chcete investovat?"* ("How much do you want to invest monthly?"). Asked *after* the conversion, so it costs nothing and segments the leads.
 - **Share loop:** WhatsApp / copy link (*"Znáte někoho, kdo platí bance 2 % ročně?"*, "Know someone paying their bank 2 % a year?"), tagged `utm_source=share`.
 - Returning visitors see *"Tahák už máte ✓"* ("You already have the cheat sheet ✓") instead of forms. No double asks, no double-counted leads.
 - Email typos on the big Czech domains are caught (*"Nemysleli jste …@seznam.cz?"*, "Did you mean …@seznam.cz?"). A lead with a typo is a paid click thrown away.
 
 ![After submit](docs/img/after-submit.png)
+
+### 3a. GDPR: consent for the emails
+
+| What | Legal basis | How |
+|---|---|---|
+| Sending the PDF the visitor asked for | Their request (GDPR art. 6(1)(b)) | One email field, no checkbox. The form's small print links to the privacy page. |
+| The 4 tips emails (commercial communication) | **Consent** (art. 6(1)(a) + Czech Act 480/2004 §7) | A separate, explicit opt-in on the thank-you panel: never pre-selected, never a condition for the PDF. |
+
+The consent wording is **versioned** in [`src/lib/consent.ts`](src/lib/consent.ts). The page sends the version it showed. The API accepts only known versions and stores `marketing_consent`, `consent_at`, `consent_version`, the **exact text**, and `consent_source` on the lead. With a store, the lead id (a random secret held only by that browser) must exist, and the stored email is used, never the client's. The webhook receives a `kind: "consent"` event, so the email tool starts the sequence only for opted-in leads. Every lead starts with `marketing_consent: "0"`. If the consent can't be stored, the visitor sees an error rather than a false "thanks". The transactional PDF email promises nothing further.
 
 ## 4. The two ads
 
@@ -138,7 +148,7 @@ Refresh: `npm run data && npm run render` (also runs weekly via [GitHub Action](
 | Interaction | `calc_interact` (first touch), `calc_change` (field, value, loss), `calc_result_view`, `table_filter`, `table_sort`, `table_expand`, `locked_click` (which ticker), `faq_open`, `cta_click`, `sticky_shown` |
 | Form | `form_view` (per location), `form_start`, `form_focus`, `form_error` (empty / invalid / typo_suggested / server), `typo_accepted`, `form_submit` |
 | Conversion | `lead_submitted` (location, **time-to-lead**, loss) + server-side `lead_ok` (the source of truth) |
-| After | `thank_you_view`, `pdf_download`, `profile_answer`, `share` |
+| After | `thank_you_view`, `pdf_download`, `optin_given` / `optin_declined` (tips-email consent), `profile_answer`, `share` |
 
 Every lead record carries its UTMs, variant, experiment arm, form location, time-to-lead and calculator values, so **CPL and lead quality can be split by ad creative.**
 
@@ -182,9 +192,9 @@ Sample size: at a 10 % base, detecting a 25 % relative lift (10 → 12.5 %) at 8
 
 Launch checklist:
 1. **Persist leads (must do).** Vercel → Storage → *Upstash for Redis* (free) → connect to the project. Env vars are added automatically. *Without it, leads only reach the function logs, which Vercel's Hobby plan keeps for ~1 hour.*
-2. **Email delivery.** Either `RESEND_API_KEY` + `MAIL_FROM` (verified domain; free 3,000 emails/month) for the instant PDF email, **and/or** `LEAD_WEBHOOK_URL` to Ecomail / MailerLite / Make for the 4-email sequence (copy not written yet; outline in §3).
+2. **Email delivery.** Either `RESEND_API_KEY` + `MAIL_FROM` (verified domain; free 3,000 emails/month) for the instant PDF email, **and/or** `LEAD_WEBHOOK_URL` to Ecomail / MailerLite / Make for the 4-email tips sequence (opted-in leads only) (copy not written yet; outline in §3).
 3. **Ad measurement.** Set `PUBLIC_META_PIXEL_ID` (and optionally `PUBLIC_GA4_ID`) in Vercel's environment variables and redeploy. No code change. Verify the domain in Meta Business Manager, and set the campaign to optimise for the `Lead` event.
-4. **Legal.** Operator name + IČO in env `PUBLIC_OPERATOR` (shown in the footer and privacy page); have the privacy text and the "4 follow-up emails" consent model reviewed (GDPR + Czech Act 480/2004 on commercial communications). If the operator is a regulated firm, a compliance check of investment marketing (past-performance warnings are already in place).
+4. **Legal.** Operator name + IČO in env `PUBLIC_OPERATOR` (shown in the footer and privacy page); have the privacy text and the opt-in wording (`src/lib/consent.ts`) reviewed; make the email tool send the tips sequence **only** on `kind: "consent"` webhook events and include a one-click unsubscribe (GDPR + Czech Act 480/2004 on commercial communications). If the operator is a regulated firm, a compliance check of investment marketing (past-performance warnings are already in place).
 5. Set `STATS_KEY` for the dashboard. A `.cz` domain is optional but raises trust.
 6. Upload the creatives with the UTM links above, and check whether Meta requires advertiser verification for financial services in CZ at launch time.
 
@@ -270,5 +280,5 @@ CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tes
 - **Not investment advice;** the tax summary is simplified (stated on the page and in the PDF).
 - **Twin quality varies:** 5 twins are the same index; VTI/VT/VEA/VWO/VGT are "near-identical"; SCHD/VYM are "similar strategy" only. All of this is labelled on the page.
 - **The 7 % assumed market return** is an assumption, stated next to the result.
-- **The 4 follow-up emails** are outlined but not written.
+- **The 4 tips emails** (opt-in only) are outlined but not written.
 - **"ETF tahák" is a made-up brand** for this exercise; the operator must be filled in before launch.

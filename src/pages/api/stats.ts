@@ -18,6 +18,7 @@ const STEPS: [event: string, label: string][] = [
   ["form_submit", "Submitted"],
   ["lead_ok", "Lead stored (server)"],
   ["pdf_download", "Downloaded PDF"],
+  ["optin_given", "Opted in to tips emails"],
   ["profile_answer", "Answered profile Q"],
 ];
 

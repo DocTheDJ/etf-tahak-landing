@@ -68,12 +68,20 @@ test("ad A (fees): calculator first, typo fix, sign-up unlocks the table", async
   await page.locator("#tahak").scrollIntoViewIfNeeded(); // the final form hydrates when visible
   await expect(page.locator("form[data-loc]")).toHaveCount(0); // ...and becomes "Tahák už máte" too
 
+  // marketing consent: a separate, explicit opt-in after the PDF is delivered (never pre-selected)
+  await expect(page.getByText("Chcete k taháku i 4 krátké tipy e-mailem?")).toBeVisible();
+  const consentRequest = page.waitForRequest((r) => r.url().includes("/api/lead") && r.method() === "PATCH" && (r.postData() ?? "").includes("consent"));
+  await page.getByRole("button", { name: "Ano, chci tipy" }).click();
+  const sent = JSON.parse((await consentRequest).postData() ?? "{}");
+  expect(sent.consent).toMatchObject({ granted: true, version: expect.stringMatching(/^tips-/) });
+  await expect(page.getByText("Díky! První tip dorazí do pár dní.")).toBeVisible();
+
   await page.getByRole("button", { name: "5–15 tisíc" }).click();
-  await expect(page.getByText("Díky! E-maily vám podle toho přizpůsobíme.")).toBeVisible();
+  await expect(page.getByText("Díky! Pomůže nám to tahák vylepšovat.")).toBeVisible();
 
   await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
   await expect.poll(() => [...events], { timeout: 8000 }).toEqual(
-    expect.arrayContaining(["lp_view", "calc_interact", "table_expand", "form_start", "form_error", "typo_accepted", "form_submit", "lead_submitted", "profile_answer"]),
+    expect.arrayContaining(["lp_view", "calc_interact", "table_expand", "form_start", "form_error", "typo_accepted", "form_submit", "lead_submitted", "optin_given", "profile_answer"]),
   );
   expect(errors).toEqual([]);
 });
@@ -108,5 +116,24 @@ test("lead API validates input", async ({ request }) => {
   expect((await request.post("/api/lead", { data: { email: "nope" } })).status()).toBe(422);
   const ok = await request.post("/api/lead", { data: { email: "test@seznam.cz", loc: "api-test", ctx: { v: "fees" } } });
   expect(ok.status()).toBe(200);
-  expect(await ok.json()).toMatchObject({ ok: true });
+  const lead = await ok.json();
+  expect(lead).toMatchObject({ ok: true });
+
+  // consent is accepted only for wording we know we showed
+  expect((await request.patch("/api/lead", { data: { id: lead.id, consent: { granted: true, version: "made-up" } } })).status()).toBe(400);
+  expect((await request.patch("/api/lead", { data: { id: lead.id, email: "test@seznam.cz", consent: { granted: true, version: "tips-2026-10-09" } } })).status()).toBe(200);
+});
+
+test("decline keeps the PDF and sends nothing else", async ({ page }) => {
+  await page.goto("/dvojcata");
+  await page.locator('astro-island[component-url*="LeadForm"]:not([ssr])').first().waitFor({ state: "attached" });
+  const form = page.locator('form[data-loc="hero_twins"]');
+  await form.getByRole("textbox").fill("eva@email.cz");
+  await form.getByRole("button", { name: "Chci je →" }).click();
+  let consentSent = false;
+  page.on("request", (r) => { if (r.method() === "PATCH" && (r.postData() ?? "").includes("consent")) consentSent = true; });
+  await page.getByRole("button", { name: "Ne, stačí mi PDF" }).click();
+  await expect(page.getByText("Dobře, žádné další e-maily. Tahák už máte.")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Stáhnout tahák/ })).toBeVisible();
+  expect(consentSent).toBe(false);
 });
