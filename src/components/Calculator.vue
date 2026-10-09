@@ -20,6 +20,11 @@ const result = computed(() => compareFees(monthly.value, years.value, fee.value,
 const barMax = computed(() => Math.max(result.value.fund, result.value.etf));
 const isEsmaDefault = computed(() => Math.abs(fee.value - ESMA_FUND_COST) < 0.05);
 
+// The big loss number must stay on ONE line ("Kč" never drops below). Its font is monospaced, so its width is
+// exactly characters × 0.6 em: the CSS sizes the font to fit the box (see .big), we only supply the length.
+const lossText = computed(() => (result.value.loss > 0 ? "−" + czk(result.value.loss) : "0 Kč"));
+const lossChars = computed(() => lossText.value.length + 1); // + the blinking caret
+
 // Share inputs + result with the lead form (sent with the lead, quoted in the email).
 watch([monthly, years, fee, result], () => {
   $calc.set({ ...$calc.get(), monthly: monthly.value, years: years.value, fee: fee.value, loss: Math.round(result.value.loss) });
@@ -78,7 +83,7 @@ onMounted(() => {
     <div ref="resultEl" class="result" aria-live="polite">
       <p class="label">Za {{ years }} let vás fond oproti ETF stojí</p>
       <!-- :key replays the entrance animation whenever the number changes -->
-      <p :key="result.loss" class="big mono">{{ result.loss > 0 ? "−" + czk(result.loss) : "0 Kč" }}<span class="caret" aria-hidden="true">_</span></p>
+      <p :key="result.loss" class="big mono" :style="{ '--chars': lossChars }">{{ lossText }}<span class="caret" aria-hidden="true">_</span></p>
       <div class="bars">
         <div class="bar">
           <span class="name">fond {{ pct(fee, 1) }}</span>
@@ -108,11 +113,16 @@ onMounted(() => {
 .hint { font-size: 12px; color: var(--muted); margin: 4px 0 0; line-height: 1.35; }
 input[type="range"] { width: 100%; height: 28px; accent-color: var(--lime); margin: 0; }
 
-.result { border-top: 1px dashed var(--line); padding-top: 14px; }
+.result { border-top: 1px dashed var(--line); padding-top: 14px; container-type: inline-size; }
 .label { margin: 0; font-size: 13px; color: var(--muted); }
 .big {
-  margin: 4px 0 12px; color: var(--coral); font-weight: 700; font-size: clamp(38px, 11.5vw, 52px);
-  line-height: 1; letter-spacing: -0.04em; animation: rise 0.35s ease-out both;
+  margin: 4px 0 12px; color: var(--coral); font-weight: 700; line-height: 1; letter-spacing: -0.04em;
+  white-space: nowrap; /* never wrap: "Kč" stays on the number's line */
+  /* fallback for browsers without container units (pre-2022): small enough for the longest value at 320 px */
+  font-size: clamp(26px, 8.4vw, 52px);
+  /* fit: box width ÷ (characters × 0.6 em per monospace character), capped at the design size */
+  font-size: min(52px, calc(100cqi / (var(--chars) * 0.6)));
+  animation: rise 0.35s ease-out both;
 }
 .bars { display: flex; flex-direction: column; gap: 8px; font: 500 12px/1 var(--f-mono); }
 .bar { display: flex; align-items: center; gap: 8px; }
@@ -121,7 +131,7 @@ input[type="range"] { width: 100%; height: 28px; accent-color: var(--lime); marg
 .fill { display: block; height: 100%; border-radius: 5px; transform-origin: left center; animation: grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .fill--fund { background: var(--coral); }
 .fill--etf { background: var(--lime); }
-.val { width: 92px; text-align: right; flex: none; }
+.val { min-width: 92px; text-align: right; flex: none; white-space: nowrap; }
 .fine { font-size: 12px; color: var(--muted); line-height: 1.45; margin: 12px 0 0; }
 @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 </style>

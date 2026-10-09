@@ -255,6 +255,7 @@ CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tes
 - no horizontal scroll
 - the ad's number (−466 000 Kč) is visible before any tap
 - the calculator updates
+- the loss number and bar values stay on one line from 320 px phones to desktop, even for the longest result (−9 384 000 Kč)
 - 6 of 12 rows show, 3 twins are open, "show more" works
 - the typo fix (`sezanm.cz → seznam.cz`)
 - sign-up: the success panel shows, the table unlocks, the other forms collapse
