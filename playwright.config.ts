@@ -14,5 +14,12 @@ export default defineConfig({
   },
   webServer: process.env.BASE_URL
     ? undefined
-    : { command: "npm run dev -- --port 4321", url: "http://localhost:4321", reuseExistingServer: !process.env.CI, timeout: 60_000 },
+    : {
+        command: "npm run dev -- --port 4321",
+        url: "http://localhost:4321",
+        reuseExistingServer: !process.env.CI,
+        timeout: 60_000,
+        // dummy key so the PostHog integration runs; tests intercept /rq7, nothing reaches PostHog (fixtures.ts)
+        env: { PUBLIC_POSTHOG_KEY: "phc_e2e_dummy" },
+      },
 });

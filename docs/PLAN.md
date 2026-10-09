@@ -91,3 +91,7 @@ All motion is CSS and stops for visitors with "reduce motion" enabled.
 
 - Email field: a running lime border until the address is valid, then solid lime + ✓. Buttons (submit when valid, 🔒 Odemknout): a light sweep, staggered and paused off-screen. Chosen from three interactive variants on the design canvas.
 - The 4 tips emails were described as "part of the cheat sheet" without consent, a grey zone under Czech Act 480/2004 §7. They're now a separate, explicit opt-in on the thank-you panel ("Ano, chci tipy" / "Ne, stačí mi PDF"). The consent is stored with timestamp, versioned wording and the exact text (`src/lib/consent.ts`). The PDF still needs only the email.
+
+## Fifth iteration: PostHog
+
+PostHog EU Cloud in cookieless mode (no banner, daily-rotating server-side hash, nothing on the device), proxied through our own domain (`/rq7`), loaded after the page is interactive using the slim build. All existing `track()` events flow into it with the ad context attached, so funnels and breakdowns by creative need no extra code. The own Redis funnel stays as a backup and as a way to measure how much ad blockers hide. Session replay only after cookie consent. Setup and the insights to create are in README §8.

@@ -1,8 +1,13 @@
 <script setup lang="ts">
-// Cookie consent for third-party measurement (GA4 / Meta / PostHog). Only rendered when one of them is configured.
-// Our own funnel tracking is cookieless and doesn't need it.
+// Cookie consent for the cookie-based tools (GA4 / Meta Pixel). Only rendered when one of them is configured.
+// Our own funnel and PostHog run cookieless and don't need it; accepting also allows PostHog session replay
+// (from the next page load).
 import { onMounted, ref } from "vue";
 import { getConsent, setConsent } from "@/lib/tracking";
+import { config } from "@/config";
+
+const tools = [config.ga4Id && "Googlu", config.metaPixelId && "Mety"].filter(Boolean).join(" a ");
+const replay = Boolean(config.posthogKey);
 
 const open = ref(false);
 onMounted(() => (open.value = !getConsent()));
@@ -15,7 +20,7 @@ function choose(choice: "all" | "none") {
 
 <template>
   <div v-if="open" class="consent" role="region" aria-label="Cookies">
-    <p>Pro měření reklam používáme cookies Googlu a Mety. <a href="/ochrana-udaju">Víc</a></p>
+    <p>Pro měření reklam používáme cookies {{ tools }}<template v-if="replay"> a anonymní záznam návštěvy</template>. <a href="/ochrana-udaju">Víc</a></p>
     <div>
       <button type="button" class="yes" @click="choose('all')">Souhlasím</button>
       <button type="button" @click="choose('none')">Jen nezbytné</button>

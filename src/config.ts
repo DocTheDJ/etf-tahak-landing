@@ -5,17 +5,21 @@ import {
   PUBLIC_GA4_ID,
   PUBLIC_META_PIXEL_ID,
   PUBLIC_POSTHOG_KEY,
-  PUBLIC_POSTHOG_HOST,
   PUBLIC_OPERATOR,
   PUBLIC_EXP_ASK,
 } from "astro:env/client";
 
 export const config = {
-  // Third-party measurement, loaded only after consent. The consent bar appears only if one is set.
+  // Cookie-based tools (ad measurement): loaded only after consent. The consent bar appears only if one is set.
   ga4Id: PUBLIC_GA4_ID,
   metaPixelId: PUBLIC_META_PIXEL_ID,
+
+  // PostHog product analytics, EU Cloud, in COOKIELESS mode: nothing is stored on the device, so it runs from the
+  // first visit without a banner. Requests go through our own domain (vercel.json rewrite /rq7 → eu.i.posthog.com)
+  // so ad blockers don't drop them. Empty key = PostHog is off.
   posthogKey: PUBLIC_POSTHOG_KEY,
-  posthogHost: PUBLIC_POSTHOG_HOST,
+  posthogProxy: "/rq7",
+  posthogUiHost: "https://eu.posthog.com",
 
   // Footer + privacy page. Legally required in CZ for commercial communication (name + IČO).
   operator: PUBLIC_OPERATOR || "Demo projekt. Provozovatel (název, IČO) bude doplněn před spuštěním.",
@@ -27,4 +31,5 @@ export const config = {
   askExperiment: PUBLIC_EXP_ASK === "on",
 } as const;
 
-export const hasThirdParty = Boolean(config.ga4Id || config.metaPixelId || config.posthogKey);
+/** Tools that set cookies and therefore need the consent bar. PostHog (cookieless) isn't one of them. */
+export const hasThirdParty = Boolean(config.ga4Id || config.metaPixelId);

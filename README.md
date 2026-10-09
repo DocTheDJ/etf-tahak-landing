@@ -139,7 +139,8 @@ Refresh: `npm run data && npm run render` (also runs weekly via [GitHub Action](
 
 1. **`window.dataLayer`**: GTM/GA4-ready, always on.
 2. **`/api/track`**: our own **cookieless** funnel (session id in memory only, so no consent needed and the funnel works from the first click). Stored in Upstash Redis as daily HyperLogLogs per segment `variant | utm_content | ask-arm`, i.e. **unique sessions per step, per ad creative**.
-3. **GA4 / Meta Pixel / PostHog**, only if their IDs are set (env vars, see [`src/config.ts`](src/config.ts)) *and* the visitor accepts the consent bar (which only appears once an ID is set). `lead_submitted` maps to GA4 `generate_lead` and Meta `Lead`, so Meta can optimise the campaign for leads.
+3. **PostHog** (EU Cloud, **cookieless**, no banner): funnels, breakdowns by ad and the web analytics dashboard. See "PostHog" below.
+4. **GA4 / Meta Pixel** (cookies), only if their IDs are set (env vars, see [`src/config.ts`](src/config.ts)) *and* the visitor accepts the consent bar (which only appears once one of them is set). `lead_submitted` maps to GA4 `generate_lead` and Meta `Lead`, so Meta can optimise the campaign for leads.
 
 | Stage | Events |
 |---|---|
@@ -152,7 +153,35 @@ Refresh: `npm run data && npm run render` (also runs weekly via [GitHub Action](
 
 Every lead record carries its UTMs, variant, experiment arm, form location, time-to-lead and calculator values, so **CPL and lead quality can be split by ad creative.**
 
-**Funnel dashboard:** `/api/stats?key=STATS_KEY` (HTML table; `&format=json` for raw). Unique sessions per step per segment, % of landed, and visit→lead rate.
+### PostHog
+
+[`src/lib/posthog.ts`](src/lib/posthog.ts) sends every `track()` event to PostHog with the ad context attached to all of them (`v` = page variant, `utm_*`, `ask` = A/B arm, `click` = fbclid/gclid). How it's set up:
+
+| | |
+|---|---|
+| **Privacy** | `cookieless_mode: "always"`: nothing in cookies or local/session storage. PostHog counts visitors with a server-side hash (project, **daily-rotating salt**, IP, user agent, hostname), so no consent banner is needed. No `identify()`, and emails never go to PostHog. |
+| **Region** | EU Cloud (`eu.i.posthog.com`). |
+| **Ad blockers** | Requests go to our own domain, `/rq7/*`, rewritten to PostHog by [`vercel.json`](vercel.json) (and by the Vite proxy in `astro.config.mjs` locally), so blockers that block posthog.com don't drop them. Comparing PostHog's numbers with our own `/api/track` funnel shows the remaining loss. |
+| **Speed** | Loaded after the page is interactive (`requestIdleCallback`); earlier events are queued with their original timestamps. Uses PostHog's **slim** build (~50 KB gz, PostHog marks it experimental) with autocapture, surveys and feature flags off. |
+| **Session replay** | Only for visitors who accepted cookies in the consent bar (which exists only when GA4/Meta are configured), starting from their next page load. The replay extension (~57 KB gz) loads only for them. |
+| **Bots** | PostHog's bot filter stays on in production. In dev it's off, so the Playwright tests can see events. |
+| **Volume** | ~25 events per session. The free tier (1M events/month) covers roughly 40k sessions/month. |
+
+**Setup (10 minutes):**
+1. Create a project in **PostHog EU Cloud** (eu.posthog.com).
+2. In Project settings → Web analytics, turn on **"Cookieless server hash mode"**. Without it, cookieless events are dropped.
+3. Put the project token (`phc_…`, it's public) into Vercel as `PUBLIC_POSTHOG_KEY` and redeploy.
+
+**Insights to create** (all from the existing events):
+- **Main funnel:** `lp_view → calc_result_view → form_start → lead_submitted → optin_given`, broken down by `utm_content` (which ad creative converts) and by `v` (fees vs twins page).
+- **Form friction:** `form_view → form_start → form_error → lead_submitted`, broken down by `loc` (hero, calculator or final form) and `type` (empty, invalid, typo_suggested, server).
+- **Interest signals:** trends of `table_filter` by `cat`, `locked_click` by `ticker`, and `calc_change` by `value` (what people actually invest).
+- **Drop-off:** `page_exit` broken down by `max_scroll`, plus `engaged_10s / lp_view` per creative (does the hero match the ad?).
+- **A/B test "ask":** the main funnel broken down by `ask`.
+
+**Debug locally:** `npm run dev` with a key, then open `/?phdebug` to see PostHog's own log in the console.
+
+**Funnel dashboard (backup, our own):** `/api/stats?key=STATS_KEY` (HTML table; `&format=json` for raw). Unique sessions per step per segment, % of landed, and visit→lead rate.
 
 ## 9. Expected conversion rate
 
@@ -193,7 +222,7 @@ Sample size: at a 10 % base, detecting a 25 % relative lift (10 → 12.5 %) at 8
 Launch checklist:
 1. **Persist leads (must do).** Vercel → Storage → *Upstash for Redis* (free) → connect to the project. Env vars are added automatically. *Without it, leads only reach the function logs, which Vercel's Hobby plan keeps for ~1 hour.*
 2. **Email delivery.** Either `RESEND_API_KEY` + `MAIL_FROM` (verified domain; free 3,000 emails/month) for the instant PDF email, **and/or** `LEAD_WEBHOOK_URL` to Ecomail / MailerLite / Make for the 4-email tips sequence (opted-in leads only) (copy not written yet; outline in §3).
-3. **Ad measurement.** Set `PUBLIC_META_PIXEL_ID` (and optionally `PUBLIC_GA4_ID`) in Vercel's environment variables and redeploy. No code change. Verify the domain in Meta Business Manager, and set the campaign to optimise for the `Lead` event.
+3. **Analytics.** Create a PostHog EU project, turn on "Cookieless server hash mode", and set `PUBLIC_POSTHOG_KEY` (see §8, PostHog). **Ad measurement:** set `PUBLIC_META_PIXEL_ID` (and optionally `PUBLIC_GA4_ID`) in Vercel's environment variables and redeploy. No code change. Verify the domain in Meta Business Manager, and set the campaign to optimise for the `Lead` event.
 4. **Legal.** Operator name + IČO in env `PUBLIC_OPERATOR` (shown in the footer and privacy page); have the privacy text and the opt-in wording (`src/lib/consent.ts`) reviewed; make the email tool send the tips sequence **only** on `kind: "consent"` webhook events and include a one-click unsubscribe (GDPR + Czech Act 480/2004 on commercial communications). If the operator is a regulated firm, a compliance check of investment marketing (past-performance warnings are already in place).
 5. Set `STATS_KEY` for the dashboard. A `.cz` domain is optional but raises trust.
 6. Upload the creatives with the UTM links above, and check whether Meta requires advertiser verification for financial services in CZ at launch time.
@@ -224,7 +253,8 @@ src/
   lib/                           ← plain TypeScript, no UI (unit-tested)
     calc.ts                        the fee formula
     email.ts                       validation + "seznam.cz?" typo suggestion
-    tracking.ts                    track() used by every component; GA4/Meta/PostHog after consent
+    tracking.ts                    track() used by every component; own funnel + PostHog, GA4/Meta after consent
+    posthog.ts                     PostHog EU, cookieless, lazy-loaded slim build
     format.ts, dom.ts
     server/                        Redis, mail, HTTP helpers (API routes only)
   stores/                        ← state shared between islands (nanostores): "signed up?", calculator values
@@ -259,7 +289,7 @@ CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tes
 
 **Pinned on purpose:** `@astrojs/vercel` is pinned to `11.0.12`. Version 11.0.13 (released 8 Oct 2026) bundles `import "rolldown"` into the server function, which crashes every API route on Vercel (`FUNCTION_INVOCATION_FAILED`, "Cannot find native binding"). `npm run check:function` (also in CI) fails the build if build tooling ever leaks into the function again. Check before upgrading. **Deploy:** `vercel deploy --prod`, or connect the repo in Vercel for deploy-on-push (Astro is auto-detected).
 
-**Performance:** the first screen is pre-rendered HTML, with no images (all CSS) and fonts with `display=swap`. JavaScript is ~43 KB gzipped in total, of which ~30 KB is the Vue runtime and ~10 KB our components. Below-the-fold islands load only when scrolled to.
+**Performance:** the first screen is pre-rendered HTML, with no images (all CSS) and fonts with `display=swap`. Page JavaScript is ~45 KB gzipped (~30 KB is the Vue runtime). Below-the-fold islands load only when scrolled to. PostHog (~50 KB gz) loads only after the page is interactive, and never blocks the first screen.
 
 **Tests:** the e2e suite checks both ads at phone size:
 - no horizontal scroll

@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/rq7/static/:path(.*)", "destination": "https://eu-assets.i.posthog.com/static/:path" },
+    { "source": "/rq7/array/:path(.*)", "destination": "https://eu-assets.i.posthog.com/array/:path" },
+    { "source": "/rq7/:path(.*)", "destination": "https://eu.i.posthog.com/:path" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

@@ -4,13 +4,15 @@
 //   1. window.dataLayer: GTM/GA4-compatible, always on, nothing leaves the browser by itself
 //   2. /api/track: our own cookieless funnel. The session id lives in memory only,
 //      so no consent is needed and the funnel works from the very first ad click.
-//   3. GA4 / Meta Pixel / PostHog, only if configured (src/config.ts) AND the visitor consented.
+//   3. PostHog (cookieless, EU, no consent needed; see lib/posthog.ts), if a key is configured.
+//   4. GA4 / Meta Pixel (cookies), only if configured AND the visitor accepted the consent bar.
 //
 // Usage anywhere (Astro <script> or Vue component):
 //   import { track } from "@/lib/tracking";
 //   track("cta_click", { cta: "sticky" });
 //   track("form_view", { loc }, { once: `form_view:${loc}` });
 import { config, hasThirdParty } from "@/config";
+import { capturePosthog, startPosthog } from "@/lib/posthog";
 
 type Props = Record<string, unknown>;
 interface QueuedEvent { n: string; p: Props; t: number }
@@ -75,6 +77,7 @@ export function track(name: string, props: Props = {}, opts: { once?: string } =
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ event: name, t, ...context(), ...props });
   queue.push({ n: name, p: props, t });
+  capturePosthog(name, props);
   toThirdParty(name, props);
   if (name === "lead_submitted") flush(); // don't wait for the interval
 }
@@ -89,7 +92,7 @@ function flush(useBeacon = false): void {
   }
 }
 
-// ---------------------------------------------------------------- third parties (consent-gated)
+// ---------------------------------------------------------------- cookie-based tools (consent-gated)
 
 function toThirdParty(name: string, props: Props): void {
   if (consent !== "all") return;
@@ -98,7 +101,6 @@ function toThirdParty(name: string, props: Props): void {
     if (name === "lead_submitted") window.fbq("track", "Lead", { content_name: "etf_tahak", content_category: context().v });
     else if (["form_start", "calc_interact", "table_filter"].includes(name)) window.fbq("trackCustom", name, props);
   }
-  window.posthog?.capture(name, props);
 }
 
 function loadScript(src: string): void {
@@ -123,14 +125,6 @@ function loadThirdParty(): void {
     window.fbq!("init", config.metaPixelId);
     window.fbq!("track", "PageView");
   }
-  if (config.posthogKey) {
-    // Official PostHog snippet (array.js loader with a stub queue), unchanged.
-    // prettier-ignore
-    // @ts-ignore
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    window.posthog!.init(config.posthogKey, { api_host: config.posthogHost, person_profiles: "identified_only" });
-    window.posthog!.register(context());
-  }
 }
 
 export function getConsent(): string | null {
@@ -153,6 +147,7 @@ export function initTracking(): void {
 
   try { consent = localStorage.getItem("consent"); } catch {}
   if (hasThirdParty && consent === "all") loadThirdParty();
+  startPosthog({ ...context() }, consent === "all");
 
   let returning = 0;
   try { returning = localStorage.getItem("lead") ? 1 : 0; } catch {}

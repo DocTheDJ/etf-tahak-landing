@@ -1,4 +1,5 @@
-import { expect, test, type Page, type Request } from "@playwright/test";
+import type { Page, Request } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 const AD_PARAMS = "utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak";
 

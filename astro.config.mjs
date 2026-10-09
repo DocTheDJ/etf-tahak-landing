@@ -13,6 +13,17 @@ export default defineConfig({
   adapter: vercel(),
   devToolbar: { enabled: false },
 
+  // Local mirror of the PostHog reverse proxy in vercel.json (same path, EU Cloud), so dev behaves like production.
+  vite: {
+    server: {
+      proxy: {
+        "/rq7/static": { target: "https://eu-assets.i.posthog.com", changeOrigin: true, rewrite: (p) => p.slice("/rq7".length) },
+        "/rq7/array": { target: "https://eu-assets.i.posthog.com", changeOrigin: true, rewrite: (p) => p.slice("/rq7".length) },
+        "/rq7": { target: "https://eu.i.posthog.com", changeOrigin: true, rewrite: (p) => p.slice("/rq7".length) },
+      },
+    },
+  },
+
   // Every environment variable the project uses, in one place. All optional: the site works without them.
   // Set them in Vercel → Settings → Environment Variables (see .env.example).
   env: {
@@ -21,7 +32,6 @@ export default defineConfig({
       PUBLIC_GA4_ID: envField.string({ context: "client", access: "public", ...optional }),
       PUBLIC_META_PIXEL_ID: envField.string({ context: "client", access: "public", ...optional }),
       PUBLIC_POSTHOG_KEY: envField.string({ context: "client", access: "public", ...optional }),
-      PUBLIC_POSTHOG_HOST: envField.string({ context: "client", access: "public", optional: true, default: "https://eu.i.posthog.com" }),
       PUBLIC_OPERATOR: envField.string({ context: "client", access: "public", ...optional }),
       PUBLIC_EXP_ASK: envField.enum({ values: ["on", "off"], context: "client", access: "public", optional: true, default: "off" }),
 

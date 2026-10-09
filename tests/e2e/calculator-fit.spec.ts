@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 // The loss number must never wrap ("Kč" dropping to a second line) and never overflow its card,
 // at any phone width, including the longest value the calculator can produce.
