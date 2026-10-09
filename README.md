@@ -2,7 +2,7 @@
 
 A lead-magnet landing page that compares **12 NYSE-listed ETFs** for **Czech retail investors arriving from a mobile ad**. In exchange for an email, visitors get a 2-page cheat sheet ("tahák") that maps every US ETF to the European twin they can actually buy.
 
-**Live:** _deploy URL_ · **Variants:** [fees (ad A)](_deploy URL_/?utm_content=fees-feed) · [twins (ad B)](_deploy URL_/?utm_content=twins-feed) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md)
+**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [fees (ad A)](https://etf-tahak-landing.vercel.app/?utm_content=fees-feed) · [twins (ad B)](https://etf-tahak-landing.vercel.app/?utm_content=twins-feed) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md)
 
 ![First screen of both variants](docs/img/first-screen-both-variants.png)
 
@@ -71,7 +71,7 @@ Both are designed for Meta (Instagram/Facebook), feed 4:5 and story 9:16 (story 
 | **Primary text:** Průměrný akciový fond v EU si každý rok strhne 1,9 % (ESMA). ETF na S&P 500 stojí od 0,03 %. Zní to jako drobnost, ale při 5 000 Kč měsíčně je to za 20 let skoro půl milionu korun. Spočítejte si svoje číslo, zabere to 10 vteřin. | **Primary text:** Chtěli jste koupit VOO, SPY nebo VT a broker vám to nedovolil? Nejste sami. Americká ETF drobný investor v EU nekoupí, chybí jim dokument KID. Každé z nich má ale evropské dvojče na stejný index. Sepsali jsme je na jeden tahák: 12 párů s ISINy a daně v kostce. Zdarma. |
 | **Headline:** Kolik vám sežerou poplatky? | **Headline:** VOO nekoupíte. Jeho dvojče ano. |
 | **Description:** Kalkulačka + tahák zdarma · **CTA:** Zjistit více | **Description:** 12 ETF a jejich dvojčata · **CTA:** Stáhnout |
-| `/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=fees-feed` | `/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=twins-feed` |
+| `https://etf-tahak-landing.vercel.app/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=fees-feed` | `https://etf-tahak-landing.vercel.app/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=twins-feed` |
 | **First screen:** H1 *"Kolik vám sežerou poplatky?"* (the ad's headline word for word) + the calculator, pre-filled with the ad's own example (5,000 CZK / 20 years / 1.9 %) so it shows **−466,000 Kč** before any tap. | **First screen:** *"VOO z Česka nekoupíte. Jeho dvojče ano."* + the same 3 pairs as in the ad (same order, same visual) + email form. |
 
 Primary text in English. Ad A: *"The average EU equity fund takes 1.9 % a year (ESMA). An S&P 500 ETF costs from 0.03 %. Sounds tiny, but at 5,000 CZK a month it's almost half a million crowns over 20 years. Work out your own number; it takes 10 seconds."* Ad B: *"Wanted to buy VOO, SPY or VT and your broker wouldn't let you? You're not alone. EU retail investors can't buy US ETFs because they lack a KID document. But each one has a European twin on the same index. We put them on one cheat sheet: 12 pairs with ISINs and taxes in a nutshell. Free."*
