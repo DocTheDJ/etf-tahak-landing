@@ -1,0 +1,13 @@
+{
+  "name": "etf-tahak-landing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Conversion landing page: NYSE ETFs and their UCITS twins for Czech retail investors (lead magnet).",
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "scripts": {
+    "data": "node scripts/fetch-data.mjs",
+    "render": "node scripts/render.mjs",
+    "dev": "node scripts/dev.mjs"
+  }
+}

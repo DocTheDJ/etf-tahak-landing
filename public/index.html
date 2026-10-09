@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ETF tahák: americké ETF a jejich evropská dvojčata</title>
+<meta name="description" content="VOO, SPY nebo VT z Česka nekoupíte. Jejich evropská dvojčata ano. Srovnání 12 ETF z NYSE, kalkulačka poplatků a tahák zdarma.">
+<meta name="theme-color" content="#f3efe6">
+<meta property="og:title" content="VOO z Česka nekoupíte. Jeho dvojče ano.">
+<meta property="og:description" content="12 ETF z NYSE a jejich evropská dvojčata. Tahák na 2 strany zdarma.">
+<meta property="og:image" content="/img/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+
+<script src="/config.js"></script>
+<script>
+  // Decide the variant before first paint so the hero matches the ad (no flicker).
+  // ?utm_content=fees-feed / twins-story ...  or ?v=fees|twins
+  (function () {
+    var p = new URLSearchParams(location.search), d = document.documentElement;
+    var v = (p.get("v") || p.get("utm_content") || "").toLowerCase();
+    d.dataset.v = /twin|dvoj/.test(v) ? "twins" : "fees";
+
+    // A/B test "ask": URL override > sticky assignment > random 50/50 (only while the test is on)
+    var exp = (window.ETF_CONFIG && ETF_CONFIG.experiments && ETF_CONFIG.experiments.ask) || {};
+    var ask = p.get("ask");
+    if (ask !== "early" && ask !== "late") {
+      try { ask = localStorage.getItem("exp_ask"); } catch (e) {}
+      if (exp.enabled && ask !== "early" && ask !== "late") {
+        ask = Math.random() < 0.5 ? "early" : "late";
+        try { localStorage.setItem("exp_ask", ask); } catch (e) {}
+      }
+      if (!exp.enabled) ask = "early";
+    }
+    d.dataset.ask = ask === "late" ? "late" : "early";
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="/" aria-label="ETF tahák">
+    <span class="logo__etf">ETF</span><span class="logo__word">tahák</span>
+  </a>
+  <span class="top__asof">data k <b data-asof>8. 10. 2026</b></span>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO: twins (ad B) ============ -->
+  <section class="sec hero hero--twins" id="dvojcata" data-sec="hero_twins">
+    <p class="eyebrow">Pro každého, komu broker řekl „ne“</p>
+    <h1 class="h1">VOO z Česka nekoupíte. <mark>Jeho dvojče ano.</mark></h1>
+    <p class="lede">Americké ETF z burzy NYSE nemají evropský dokument KID, a tak je broker drobnému investorovi v EU neprodá. Každé z nich má ale evropské dvojče na stejný index. Některá jsou dokonce levnější.</p>
+
+    <div class="slip slip--pairs" aria-label="Ukázka z taháku">
+      <div class="pair">
+        <span class="pair__us"><b>VOO</b><i data-er="VOO">0,03 %</i></span>
+        <span class="pair__arrow" aria-hidden="true">→</span>
+        <span class="pair__eu"><b>VUAA</b><i data-ter="VOO">0,07 %</i></span>
+      </div>
+      <div class="pair">
+        <span class="pair__us"><b>SPY</b><i data-er="SPY">0,09 %</i></span>
+        <span class="pair__arrow" aria-hidden="true">→</span>
+        <span class="pair__eu"><b>SPYL</b><i data-ter="SPY">0,03 %</i></span>
+        <span class="note note--right">levnější než originál!</span>
+      </div>
+      <div class="pair">
+        <span class="pair__us"><b>VT</b><i data-er="VT">0,06 %</i></span>
+        <span class="pair__arrow" aria-hidden="true">→</span>
+        <span class="pair__eu"><b>VWCE</b><i data-ter="VT">0,14 %</i></span>
+      </div>
+      <div class="pair pair--locked" aria-hidden="true">
+        <span class="pair__us"><b>SCHD</b><i>0,06 %</i></span>
+        <span class="pair__arrow">→</span>
+        <span class="pair__eu blur"><b>XXXX</b><i>0,00 %</i></span>
+      </div>
+      <p class="slip__more">+ 9 dalších párů s ISINy v taháku</p>
+    </div>
+
+    <div class="ask-early">
+      <form class="lead" data-loc="hero_twins" novalidate>
+        <label class="lead__label" for="email-hero">Pošleme vám všech 12 párů. Kam?</label>
+        <div class="lead__row">
+          <input class="lead__input" id="email-hero" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="vas@email.cz" required>
+          <button class="btn btn--primary" type="submit">Chci tahák zdarma</button>
+        </div>
+        <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="lead__error" role="alert" hidden></p>
+        <p class="lead__micro">PDF hned ke stažení. Žádné telefonáty, žádný poradce. <a href="/ochrana-udaju">Co s e-mailem uděláme</a></p>
+      </form>
+    </div>
+    <div class="ask-late">
+      <a class="btn btn--primary btn--block" href="#srovnani" data-cta="hero_twins_late">Ukázat všech 12 párů ↓</a>
+    </div>
+  </section>
+
+  <!-- ============ CALCULATOR (hero in ad A, section in ad B) ============ -->
+  <section class="sec calc" id="kalkulacka" data-sec="calculator">
+    <div class="calc__head calc__head--hero">
+      <p class="eyebrow">Kalkulačka · 10 vteřin</p>
+      <h1 class="h1">Kolik vám <mark>sežerou poplatky?</mark></h1>
+      <p class="lede">Průměrný fond v EU stojí <b>1,9 % ročně</b>, ETF na S&amp;P 500 od <b>0,03 %</b>. Rozdíl vypadá malý. Není.</p>
+    </div>
+    <div class="calc__head calc__head--section">
+      <p class="eyebrow">Kalkulačka</p>
+      <h2 class="h2">Proč na procentech záleží</h2>
+      <p class="lede">Poplatek se strhává z celé částky každý rok. Za 20 let z toho jsou statisíce.</p>
+    </div>
+
+    <div class="slip calc__box">
+      <fieldset class="field">
+        <legend>Kolik měsíčně investujete? <span class="field__unit">Kč</span></legend>
+        <div class="chips" data-input="monthly">
+          <button type="button" class="chip" data-val="2000">2 000</button>
+          <button type="button" class="chip is-on" data-val="5000">5 000</button>
+          <button type="button" class="chip" data-val="10000">10 000</button>
+          <button type="button" class="chip" data-val="20000">20 000</button>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Na jak dlouho?</legend>
+        <div class="chips" data-input="years">
+          <button type="button" class="chip" data-val="10">10 let</button>
+          <button type="button" class="chip is-on" data-val="20">20 let</button>
+          <button type="button" class="chip" data-val="30">30 let</button>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label for="fee">Kolik ročně platíte teď? <output id="fee-out" class="mono">1,9 %</output></label>
+        <input id="fee" type="range" min="0.5" max="3" step="0.1" value="1.9">
+        <p class="field__hint" id="fee-hint">1,9 % = průměrné celkové náklady akciových fondů v EU (ESMA)</p>
+      </div>
+
+      <div class="result" aria-live="polite">
+        <p class="result__label">Za <span data-out="years">20 let</span> vás poplatky stojí navíc</p>
+        <p class="result__big mono" data-out="loss">−467 000 Kč</p>
+        <div class="bars">
+          <div class="bar bar--fund"><span class="bar__fill" data-bar="fund"></span><span class="bar__txt">Fond <b data-out="feeLbl">1,9 %</b> <span class="mono" data-out="fvFund"></span></span></div>
+          <div class="bar bar--etf"><span class="bar__fill" data-bar="etf"></span><span class="bar__txt">ETF <b>0,07 %</b> <span class="mono" data-out="fvEtf"></span></span></div>
+        </div>
+        <p class="result__fine">Vloženo celkem <span class="mono" data-out="paid"></span>. Předpoklad: trh vydělá 7 % ročně před poplatky. ETF = evropské dvojče VOO (VUAA, 0,07 %). Minulé výnosy nezaručují budoucí.</p>
+      </div>
+    </div>
+
+    <form class="lead lead--after-calc" data-loc="calculator" novalidate>
+      <label class="lead__label" for="email-calc">Tahák vám ukáže 12 ETF, se kterými si ten rozdíl necháte. Kam ho poslat?</label>
+      <div class="lead__row">
+        <input class="lead__input" id="email-calc" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="vas@email.cz" required>
+        <button class="btn btn--primary" type="submit">Pošlete mi tahák</button>
+      </div>
+      <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="lead__error" role="alert" hidden></p>
+      <p class="lead__micro">PDF hned ke stažení. Žádné telefonáty, žádný poradce. <a href="/ochrana-udaju">Co s e-mailem uděláme</a></p>
+    </form>
+  </section>
+
+  <!-- ============ WHAT'S INSIDE ============ -->
+  <section class="sec inside" id="co-dostanete" data-sec="inside">
+    <h2 class="h2">Co je v taháku</h2>
+    <div class="inside__grid">
+      <div class="paper" aria-hidden="true">
+        <div class="paper__head"><b>ETF tahák</b> 2026</div>
+        <div class="paper__row"><span>VOO</span><span>→</span><span class="hl">VUAA</span></div>
+        <div class="paper__row"><span>IVV</span><span>→</span><span class="hl">SXR8</span></div>
+        <div class="paper__row"><span>SPY</span><span>→</span><span class="hl">SPYL</span></div>
+        <div class="paper__row"><span>VT</span><span>→</span><span class="hl">VWCE</span></div>
+        <div class="paper__row"><span>SCHD</span><span>→</span><span class="hl">FUSD</span></div>
+        <div class="paper__lines"><i></i><i></i><i></i><i></i></div>
+        <div class="paper__tag">2 strany A4</div>
+      </div>
+      <ol class="inside__list">
+        <li><b>12 ETF z NYSE vedle sebe.</b> Poplatek, výnos za 1, 5 a 10 let, dividenda.</li>
+        <li><b>Evropské dvojče ke každému.</b> Ticker, ISIN a poplatek. Stačí zkopírovat do aplikace brokera.</li>
+        <li><b>Daně na jedné straně.</b> Časový test 3 roky, limit 100 000 Kč, formulář W-8BEN a DIP.</li>
+        <li><b>5 kroků k prvnímu nákupu.</b> Od výběru indexu po trvalý příkaz.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ COMPARISON TABLE ============ -->
+  <section class="sec table" id="srovnani" data-sec="table">
+    <h2 class="h2">12 populárních ETF z NYSE a čím je nahradit</h2>
+    <p class="lede">Všechny se obchodují na NYSE Arca. Žádné z nich si u evropského brokera jako drobný investor nekoupíte. Dvojčata ano.</p>
+
+    <div class="filters" role="toolbar" aria-label="Filtr">
+      <button type="button" class="chip is-on" data-cat="all">Vše</button>
+      <button type="button" class="chip" data-cat="sp500">S&amp;P 500</button>
+      <button type="button" class="chip" data-cat="world">Svět</button>
+      <button type="button" class="chip" data-cat="dividend">Dividendy</button>
+      <button type="button" class="chip" data-cat="tech">Tech</button>
+      <button type="button" class="chip" data-cat="gold">Zlato</button>
+    </div>
+    <div class="sort">
+      Řadit:
+      <button type="button" class="link is-on" data-sort="pop">oblíbenost</button> ·
+      <button type="button" class="link" data-sort="er">poplatek</button> ·
+      <button type="button" class="link" data-sort="r10">výnos 10 let</button>
+    </div>
+
+    <ul class="etfs" id="etfs" aria-live="polite">
+      <li class="etf etf--skeleton">Načítám data…</li>
+    </ul>
+    <button type="button" class="btn btn--ghost btn--block etfs__more" id="etfs-more" hidden>Ukázat další ETF ↓</button>
+
+    <p class="table__fine">Výnos = průměrný roční výnos v USD vč. reinvestovaných dividend k <span data-asof>8. 10. 2026</span>. Minulé výnosy nezaručují budoucí. Zdroje dole.</p>
+  </section>
+
+  <!-- ============ OBJECTIONS ============ -->
+  <section class="sec faq" id="otazky" data-sec="faq">
+    <h2 class="h2">Na co se lidé ptají</h2>
+    <details>
+      <summary>Proč nemůžu koupit VOO přímo?</summary>
+      <p>Od roku 2018 platí v EU nařízení PRIIPs. Fond nabízený drobným investorům musí mít dokument KID s klíčovými informacemi. Americké fondy ho nevydávají, a tak je evropští brokeři pro běžné klienty blokují. Výjimkou jsou „profesionální klienti“, tím ale běžný investor není.</p>
+    </details>
+    <details>
+      <summary>Není evropské dvojče horší než originál?</summary>
+      <p>Pro investora z Česka spíš naopak. Akumulační verze dividendy rovnou reinvestuje, takže je nemusíte danit ani vykazovat. U amerických fondů navíc hrozí americká dědická daň u majetku nad 60 000 USD. Irské fondy se jí netýkají.</p>
+    </details>
+    <details>
+      <summary>Co za tahák chcete?</summary>
+      <p>Jen e-mail. PDF dostanete hned a pak 4 krátké e-maily: jak vybrat brokera, jak nastavit pravidelnou investici, daně a DIP. Žádné telefonáty, žádný poradce. Odhlásíte se jedním klikem.</p>
+    </details>
+    <details>
+      <summary>Je to investiční doporučení?</summary>
+      <p>Ne. Je to srovnání veřejných dat, zdroje najdete dole. Investice nesou riziko, hodnota může klesat a minulé výnosy nezaručují budoucí. Co a kdy koupíte, je na vás.</p>
+    </details>
+  </section>
+
+  <!-- ============ FINAL ASK ============ -->
+  <section class="sec final" id="tahak" data-sec="final">
+    <h2 class="h2">Celý tahák na 2 strany. <mark>Přečtete ho za jednu cestu tramvají.</mark></h2>
+    <form class="lead" data-loc="final" novalidate>
+      <label class="lead__label" for="email-final">Kam vám ho poslat?</label>
+      <div class="lead__row">
+        <input class="lead__input" id="email-final" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="vas@email.cz" required>
+        <button class="btn btn--primary" type="submit">Chci tahák zdarma</button>
+      </div>
+      <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="lead__error" role="alert" hidden></p>
+      <p class="lead__micro">PDF hned ke stažení. Žádné telefonáty, žádný poradce. <a href="/ochrana-udaju">Co s e-mailem uděláme</a></p>
+    </form>
+  </section>
+
+</main>
+
+<!-- Success panel template: replaces the submitted form -->
+<template id="tpl-done">
+  <div class="done" tabindex="-1">
+    <p class="done__kicker">Hotovo ✓</p>
+    <p class="done__title">Tahák je váš.</p>
+    <a class="btn btn--primary btn--block" data-pdf href="/tahak/etf-tahak-2026.pdf" download>Stáhnout tahák (PDF, 2 strany)</a>
+    <p class="done__mail" data-mail-msg></p>
+    <p class="done__unlock">Všechna dvojčata ve srovnání níže jsou teď odemčená. <a href="#srovnani">Ukázat</a></p>
+
+    <div class="done__q" data-profile>
+      <p class="done__qlabel">Ještě jedna věc, nepovinně: kolik měsíčně chcete investovat?</p>
+      <div class="chips">
+        <button type="button" class="chip" data-answer="lt2k">do 2 000 Kč</button>
+        <button type="button" class="chip" data-answer="2-5k">2–5 tisíc</button>
+        <button type="button" class="chip" data-answer="5-15k">5–15 tisíc</button>
+        <button type="button" class="chip" data-answer="15k+">15 tisíc +</button>
+      </div>
+    </div>
+    <p class="done__thanks" data-profile-thanks hidden>Díky! E-maily vám podle toho přizpůsobíme.</p>
+
+    <div class="done__share">
+      <p>Znáte někoho, kdo platí bance 2 % ročně?</p>
+      <a class="btn btn--ghost" data-share="whatsapp" target="_blank" rel="noopener">Poslat přes WhatsApp</a>
+      <button type="button" class="btn btn--ghost" data-share="copy">Zkopírovat odkaz</button>
+    </div>
+  </div>
+</template>
+
+<a class="sticky" href="#tahak" data-cta="sticky" hidden>
+  <span>Tahák s 12 dvojčaty</span><b>Zdarma →</b>
+</a>
+
+<footer class="foot">
+  <h2 class="foot__h">Zdroje dat</h2>
+  <ul class="foot__src">
+    <li>Kurzy a výnosy: <a href="https://finance.yahoo.com/" rel="noopener">Yahoo Finance</a>, upravené závěrečné ceny (vč. dividend), USD, k <span data-asof>8. 10. 2026</span>.</li>
+    <li>Poplatky a velikost amerických ETF: <a href="https://stockanalysis.com/etf/" rel="noopener">stockanalysis.com</a> (data emitentů Vanguard, BlackRock, State Street, Schwab).</li>
+    <li>Evropská dvojčata (TER, ISIN, tickery na Xetře): <a href="https://www.justetf.com/" rel="noopener">justETF</a>.</li>
+    <li>Průměrné náklady fondů v EU 1,9 % ročně: <a href="https://www.esma.europa.eu/sites/default/files/2026-03/ESMA50-1949966494-4065_Market_Report_-_Costs_and_Performance_of_EU_Retail_Investment_Products.pdf" rel="noopener">ESMA, Costs and Performance of EU Retail Investment Products 2025</a>, str. 6.</li>
+  </ul>
+  <p class="foot__legal">ETF tahák není investiční doporučení ani nabídka investičních služeb. Investování nese riziko ztráty, hodnota investice může kolísat a minulé výnosy nejsou zárukou budoucích. Daňové informace jsou zjednodušené, ve vaší situaci se mohou lišit.</p>
+  <p class="foot__legal"><a href="/ochrana-udaju">Ochrana osobních údajů</a> · <span data-operator></span></p>
+</footer>
+
+<script src="/track.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

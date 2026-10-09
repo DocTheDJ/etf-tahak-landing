@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ochrana osobních údajů · ETF tahák</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .doc { max-width: var(--col); margin: 0 auto; padding: 24px var(--gut) 60px; }
+  .doc h1 { font-weight: 850; font-variation-settings: "wdth" 76; font-size: 34px; line-height: 1.05; margin: 18px 0 16px; }
+  .doc h2 { font-size: 18px; margin: 24px 0 6px; }
+  .doc p, .doc li { color: var(--ink-2); font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <a class="logo" href="/" aria-label="ETF tahák"><span class="logo__etf">ETF</span><span class="logo__word">tahák</span></a>
+  <h1>Co s vaším e-mailem uděláme</h1>
+  <p>Krátce a lidsky. Tohle je pracovní znění, před spuštěním ho musí doplnit a schválit provozovatel.</p>
+
+  <h2>Jaké údaje sbíráme</h2>
+  <ul>
+    <li>E-mail, který zadáte do formuláře.</li>
+    <li>Odpověď na nepovinnou otázku po odeslání (kolik chcete investovat).</li>
+    <li>Hodnoty z kalkulačky, pokud jste ji použili.</li>
+    <li>Odkud jste přišli (označení reklamy v odkazu, tzv. UTM) a anonymní průchod stránkou bez cookies.</li>
+  </ul>
+
+  <h2>Proč</h2>
+  <p>Abychom vám poslali tahák, o který jste si řekli, a 4 navazující e-maily, které jsou jeho součástí (právní základ: plnění vaší žádosti). A abychom věděli, která reklama a která verze stránky funguje (oprávněný zájem). Další obchodní sdělení posíláme jen s vaším souhlasem.</p>
+
+  <h2>Jak dlouho</h2>
+  <p>Do odhlášení, nejdéle 3 roky od posledního otevření e-mailu.</p>
+
+  <h2>Cookies</h2>
+  <p>Vlastní měření stránky cookies nepoužívá. Měřicí kódy Googlu a Mety se načtou až po vašem souhlasu v liště dole.</p>
+
+  <h2>Vaše práva</h2>
+  <p>Můžete požádat o výpis, opravu nebo smazání údajů, odvolat souhlas a podat stížnost u Úřadu pro ochranu osobních údajů (uoou.gov.cz). Odhlásit se můžete odkazem v každém e-mailu.</p>
+
+  <h2>Správce</h2>
+  <p data-operator></p>
+
+  <p><a href="/">← Zpět na tahák</a></p>
+</div>
+<script src="/config.js"></script>
+<script>document.querySelector("[data-operator]").textContent = (window.ETF_CONFIG || {}).operator || "";</script>
+</body>
+</html>

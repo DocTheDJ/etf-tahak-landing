@@ -1,0 +1,33 @@
+# Weekly refresh of fees/returns and the PDF, so "data k …" on the page stays true.
+# Commits only when something changed; Vercel redeploys from the push.
+name: Refresh ETF data
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch data
+        run: node scripts/fetch-data.mjs
+      - name: Render PDF and images
+        run: node scripts/render.mjs
+        env:
+          CHROME: /usr/bin/google-chrome
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data public/tahak public/img public/ads
+          git diff --cached --quiet || git commit -m "Refresh ETF data ($(date -u +%F))"
+          git push
