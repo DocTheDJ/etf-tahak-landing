@@ -1,17 +1,24 @@
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>OG</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@600&family=JetBrains+Mono:wght@500;700&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@500;700&display=block" rel="stylesheet">
 <link rel="stylesheet" href="ad.css">
 <style>
-  body { width: 1200px; height: 630px; padding: 60px 70px; flex-direction: row; gap: 50px; align-items: center; }
+  body { width: 1200px; height: 630px; }
+  .tape { height: 56px; font-size: 24px; gap: 40px; padding-left: 28px; }
+  .inner { flex-direction: row; align-items: center; gap: 56px; padding: 40px 64px; }
   .l { flex: 1; }
-  h1 { font-size: 82px; margin-top: 30px; }
-  .pairs { width: 380px; padding: 20px 30px; transform: rotate(-2deg); font-family: "JetBrains Mono"; font-size: 44px; font-weight: 700; }
-  .pairs div { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 3px dashed rgba(22,20,15,.25); }
-  .pairs div:last-child { border: 0; }
-  .pairs s { color: #4a463d; text-decoration-color: #c8281f; text-decoration-thickness: 6px; }
-  .pairs b { color: #0c7448; background: linear-gradient(transparent 52%, #ffe45c 52%); }
+  .logo { font-size: 36px; gap: 14px; }
+  .logo span:first-child { width: 48px; height: 48px; border-radius: 12px; font-size: 17px; }
+  h1 { font-size: 80px; margin-top: 30px; }
+  .book { width: 400px; padding: 10px 30px; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 42px; border-radius: 32px; }
+  .book div { display: flex; justify-content: space-between; padding: 18px 0; border-bottom: 2px solid #2a2d36; }
+  .book div:last-child { border: 0; }
+  .us { color: #ff5a4e; text-decoration: line-through; text-decoration-thickness: 5px; }
+  .eu { color: #d4ff3a; }
 </style></head>
 <body>
-  <div class="l"><div class="logo"><i>ETF</i><b>tahák</b></div><h1>VOO z Česka nekoupíte. <mark>Jeho dvojče ano.</mark></h1></div>
-  <div class="slip pairs"><div><s>VOO</s>→<b>VUAA</b></div><div><s>SPY</s>→<b>SPYL</b></div><div><s>VT</s>→<b>VWCE</b></div></div>
+  <div class="tape tape--lime"><span>VOO 0,03 % → VUAA 0,07 %</span><i>●</i><span>SPY 0,09 % → SPYL 0,03 %</span><i>●</i><span>VT 0,06 % → VWCE 0,14 %</span></div>
+  <div class="inner">
+    <div class="l"><div class="logo"><span>ETF</span><span>tahák</span></div><h1>VOO z Česka nekoupíte. <span class="lime">Jeho dvojče ano.</span></h1></div>
+    <div class="card book"><div><span class="us">VOO</span><span class="eu">VUAA</span></div><div><span class="us">SPY</span><span class="eu">SPYL</span></div><div><span class="us">VT</span><span class="eu">VWCE</span></div></div>
+  </div>
 </body></html>

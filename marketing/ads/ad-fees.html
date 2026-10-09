@@ -1,32 +1,42 @@
 <!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Ad A: fees</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@600&family=JetBrains+Mono:wght@500;700&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@500;700&display=block" rel="stylesheet">
 <link rel="stylesheet" href="ad.css">
 <style>
-  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 54px 0 0; }
-  .compare div { border: 5px solid #16140f; border-radius: 8px; padding: 22px 26px; background: #fbf9f4; }
-  .compare span { display: block; font-size: 32px; color: #4a463d; }
-  .compare b { font: 700 76px/1.1 "JetBrains Mono"; }
-  .compare .bad b { color: #c8281f; text-decoration: line-through; text-decoration-thickness: 6px; }
-  .compare .good { background: #ffe45c; }
-  .loss { margin: 54px 0 0; padding: 30px 36px 34px; }
-  .loss p { margin: 0; font-size: 36px; font-weight: 700; }
-  .loss b { display: block; font: 700 140px/1 "JetBrains Mono"; letter-spacing: -.05em; color: #c8281f; margin-top: 12px; white-space: nowrap; }
-  .loss .hand { right: 30px; top: -44px; transform: rotate(-5deg); }
-  body.story h1 { font-size: 128px; }
+  .compare { margin-top: 34px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .compare div { padding: 24px 30px; }
+  .compare span { display: block; font-size: 32px; color: #9ba1ad; margin-bottom: 8px; }
+  .compare b { font: 700 72px/1 "JetBrains Mono", monospace; letter-spacing: -0.04em; }
+  .loss { margin: 22px 0 30px; padding: 28px 36px; }
+  .loss p { margin: 0; font-size: 36px; color: #9ba1ad; }
+  .loss .num { margin: 8px 0 18px; font: 700 116px/1 "JetBrains Mono", monospace; letter-spacing: -0.06em; color: #ff5a4e; white-space: nowrap; }
+  .num i { font-style: normal; color: #d4ff3a; }
+  .bar { display: flex; align-items: center; gap: 22px; font: 500 28px/1 "JetBrains Mono", monospace; margin-top: 10px; }
+  .bar span:first-child { width: 120px; color: #9ba1ad; }
+  .bar .t { flex: 1; height: 20px; border-radius: 10px; background: #23262e; overflow: hidden; }
+  .bar .t b { display: block; height: 100%; border-radius: 13px; }
+  body.story h1 { font-size: 136px; }
 </style></head>
 <body>
-  <div class="logo"><i>ETF</i><b>tahák</b></div>
-  <h1>Kolik vám <mark>sežerou poplatky?</mark></h1>
-  <div class="compare">
-    <div class="bad"><span>Průměrný fond v EU</span><b>1,9 %</b></div>
-    <div class="good"><span>ETF na S&amp;P 500</span><b>0,07 %</b></div>
+  <div class="tape tape--lime"><span>VOO 0,03 % → VUAA 0,07 %</span><i>●</i><span>SPY 0,09 % → SPYL 0,03 %</span><i>●</i><span>VT 0,06 % → VWCE 0,14 %</span></div>
+  <div class="inner">
+    <div class="top">
+      <div class="logo"><span>ETF</span><span>tahák</span></div>
+      <div class="live"><b></b>ŽIVÁ DATA</div>
+    </div>
+    <p class="eyebrow">KALKULAČKA / 10 VTEŘIN</p>
+    <h1>Kolik vám <span class="lime">sežerou</span> <span class="coral">poplatky?</span></h1>
+    <div class="compare">
+      <div class="card"><span>Průměrný fond v EU</span><b class="coral">1,9 %</b></div>
+      <div class="card"><span>ETF na S&amp;P 500</span><b class="lime">0,07 %</b></div>
+    </div>
+    <div class="card loss">
+      <p>Rozdíl za 20 let při 5 000 Kč měsíčně</p>
+      <div class="num">−466 000 Kč<i>_</i></div>
+      <div class="bar"><span>fond</span><span class="t"><b style="width: 81%; background: #ff5a4e"></b></span></div>
+      <div class="bar"><span>ETF</span><span class="t"><b style="width: 100%; background: #d4ff3a"></b></span></div>
+    </div>
+    <div class="cta"><span>Spočítejte si to za 10 vteřin</span><span>→</span></div>
+    <p class="fine">Předpoklad: výnos trhu 7 % ročně před poplatky. 1,9 % = průměrné celkové náklady akciových fondů v EU (ESMA 2026). Nejde o investiční doporučení.</p>
   </div>
-  <div class="slip loss">
-    <p>Rozdíl za 20 let při 5 000 Kč měsíčně:</p>
-    <b>−466 000 Kč</b>
-    <span class="hand">skoro půl milionu!</span>
-  </div>
-  <div class="cta"><span>Spočítejte si to za 10 vteřin</span><span>→</span></div>
-  <p class="fine">Předpoklad: výnos trhu 7 % ročně před poplatky. 1,9 % = průměrné celkové náklady akciových fondů v EU (ESMA 2026). Nejde o investiční doporučení.</p>
 <script>if (/f=story/.test(location.search)) document.body.className = "story";</script>
 </body></html>

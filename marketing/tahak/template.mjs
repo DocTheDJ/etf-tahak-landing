@@ -24,44 +24,43 @@ export function renderTahak(data) {
   const tahak = `<!doctype html>
   <html lang="cs"><head><meta charset="utf-8"><title>ETF tahák 2026</title>
   <meta name="robots" content="noindex">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@600&family=JetBrains+Mono:wght@500;700&display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@500;700&display=block" rel="stylesheet">
   <style>
     @page { size: A4; margin: 0; }
     * { box-sizing: border-box; }
-    body { margin: 0; font: 400 10.5pt/1.42 "Archivo", sans-serif; color: #16140f; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { margin: 0; font: 400 10.5pt/1.42 "Bricolage Grotesque", sans-serif; color: #0e0f12; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .page { width: 210mm; height: 297mm; padding: 13mm 13mm 11mm; position: relative; overflow: hidden; page-break-after: always;
-      background-color: #fbf9f4; background-image: linear-gradient(rgba(60,90,140,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(60,90,140,.08) 1px, transparent 1px); background-size: 5mm 5mm; }
+      background: #ffffff; border-top: 3mm solid #d4ff3a; }
     .page:last-child { page-break-after: auto; }
-    .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #16140f; padding-bottom: 3mm; margin-bottom: 5mm; }
+    .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0e0f12; padding-bottom: 3mm; margin-bottom: 5mm; }
     .logo { display: inline-flex; transform: rotate(-1.5deg); }
-    .logo i { font: 700 9pt/1 "JetBrains Mono"; background: #16140f; color: #ffe45c; padding: 4px 5px; font-style: normal; }
-    .logo b { font-weight: 850; font-variation-settings: "wdth" 80; font-size: 14pt; line-height: 1; border: 1.5px solid #16140f; border-left: 0; padding: 1px 6px; }
-    h1 { font-weight: 880; font-variation-settings: "wdth" 70; font-size: 24pt; line-height: 1; margin: 0; }
-    h2 { font-weight: 850; font-variation-settings: "wdth" 78; font-size: 15pt; line-height: 1.1; margin: 0 0 2.5mm; }
+    .logo i { font: 700 8pt/1 "JetBrains Mono"; background: #d4ff3a; color: #0e0f12; padding: 5px 5px; border-radius: 4px; font-style: normal; }
+    .logo b { font-weight: 800; font-size: 14pt; line-height: 1; padding: 1px 6px; }
+    h1 { font-weight: 800; font-size: 20pt; line-height: 1.05; letter-spacing: -0.02em; margin: 0; }
+    h2 { font-weight: 850; font-size: 15pt; line-height: 1.1; margin: 0 0 2.5mm; }
     .meta { font: 500 8pt/1.3 "JetBrains Mono"; color: #4a463d; text-align: right; white-space: nowrap; }
-    mark { background: linear-gradient(transparent 40%, #ffe45c 40%); color: inherit; padding: 0 2px; }
-    .box { border: 1.5px solid #16140f; background: #fff; padding: 3.5mm 4mm; box-shadow: 2px 2px 0 #16140f; margin-bottom: 5mm; }
+    mark { background: #d4ff3a; color: inherit; padding: 0 3px; border-radius: 3px; }
+    .box { border: 1px solid #d5d8de; background: #f4f5f7; border-radius: 3mm; padding: 3mm 4mm; margin-bottom: 4mm; }
     .box p { margin: 0; }
-    table { width: 100%; border-collapse: collapse; background: #fff; border: 1.5px solid #16140f; font-size: 9pt; }
-    th { background: #16140f; color: #ffe45c; font: 700 7.5pt/1.2 "Archivo"; text-align: left; padding: 2.2mm 2mm; }
-    td { padding: 1.4mm 2mm; border-top: 1px solid #d9d3c6; vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #0e0f12; font-size: 9pt; }
+    th { background: #0e0f12; color: #d4ff3a; font: 700 7.5pt/1.2 "Bricolage Grotesque"; text-align: left; padding: 2.2mm 2mm; }
+    td { padding: 1.25mm 2mm; border-top: 1px solid #e3e5ea; vertical-align: middle; }
     td b { font: 700 10.5pt/1.1 "JetBrains Mono"; display: block; }
     td small { display: block; font-size: 7.2pt; color: #7b766a; line-height: 1.2; }
     td.n { font-family: "JetBrains Mono"; text-align: right; white-space: nowrap; }
     td.isin { font: 500 8pt "JetBrains Mono"; }
-    td.twin b { color: #0c7448; background: linear-gradient(transparent 50%, #ffe45c 50%); display: inline; }
+    td.twin b { color: #0e0f12; background: #d4ff3a; padding: 0 2px; border-radius: 2px; display: inline; }
     td.arrow { font-size: 12pt; padding: 0 1mm; }
-    tr td:first-child b { text-decoration: line-through; text-decoration-color: #c8281f; text-decoration-thickness: 2px; }
+    tr td:first-child b { text-decoration: line-through; text-decoration-color: #e5483d; text-decoration-thickness: 2px; color: #e5483d; }
     .legend { font-size: 8pt; color: #4a463d; margin: 2mm 0 4mm; }
-    .note { font: 600 14pt/1 "Caveat"; color: #c8281f; position: absolute; transform: rotate(-4deg); }
-    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+        .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
     ol, ul { margin: 0; padding-left: 5mm; }
     li { margin: 0 0 1.8mm; }
-    .tax li b { background: #ffe45c; padding: 0 2px; }
+    .tax li b { background: #d4ff3a; padding: 0 2px; border-radius: 2px; }
     .steps { counter-reset: s; list-style: none; padding: 0; }
     .steps li { counter-increment: s; padding-left: 8mm; position: relative; }
-    .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 5.2mm; height: 5.2mm; border: 1.5px solid #16140f; border-radius: 50%; background: #ffe45c; font: 700 8pt/4.6mm "JetBrains Mono"; text-align: center; }
-    .foot { position: absolute; left: 13mm; right: 13mm; bottom: 9mm; font-size: 7pt; color: #7b766a; border-top: 1px solid #16140f; padding-top: 2mm; }
+    .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 5.2mm; height: 5.2mm; border: 0; border-radius: 50%; background: #0e0f12; color: #d4ff3a; font: 700 8pt/4.6mm "JetBrains Mono"; text-align: center; }
+    .foot { position: absolute; left: 13mm; right: 13mm; bottom: 9mm; font-size: 7pt; color: #6b7180; border-top: 1px solid #0e0f12; padding-top: 2mm; }
     .foot a { color: inherit; }
   </style></head><body>
 
@@ -86,7 +85,7 @@ export function renderTahak(data) {
       </div>
       <div class="box" style="margin:0">
         <h2>Kolik stojí 1,9 % ročně</h2>
-        <p>5 000 Kč měsíčně, 20 let, trh +7 % ročně: fond za 1,9 % ≈ <b>2,05 mil. Kč</b>, ETF za 0,07 % ≈ <b>2,52 mil. Kč</b>. Rozdíl <b style="color:#c8281f">466 000 Kč</b>. 1,9 % = průměrné celkové náklady akciových fondů v EU (ESMA 2026).</p>
+        <p>5 000 Kč měsíčně, 20 let, trh +7 % ročně: fond za 1,9 % ≈ <b>2,05 mil. Kč</b>, ETF za 0,07 % ≈ <b>2,52 mil. Kč</b>. Rozdíl <b style="color:#e5483d">466 000 Kč</b>. 1,9 % = průměrné celkové náklady akciových fondů v EU (ESMA 2026).</p>
       </div>
     </div>
 

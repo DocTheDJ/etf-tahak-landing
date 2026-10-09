@@ -40,7 +40,7 @@ function go() {
 
 <template>
   <button type="button" class="sticky" :class="{ shown: show }" :aria-hidden="!show" :tabindex="show ? 0 : -1" @click="go">
-    <span>Tahák s 12 dvojčaty</span><b>Zdarma →</b>
+    <span>Tahák s 12 dvojčaty</span><b>Chci ho →</b>
   </button>
 </template>
 
@@ -50,11 +50,11 @@ function go() {
   position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 20;
   max-width: calc(var(--col) - 24px); margin: 0 auto;
   display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  min-height: 56px; padding: 0 16px; border: var(--line); border-radius: var(--r);
-  background: var(--ink); color: #fff; box-shadow: 3px 3px 0 var(--marker);
-  font: 600 16px/1 var(--f-sans);
+  min-height: 56px; padding: 0 18px; border: 0; border-radius: var(--r);
+  background: var(--lime); color: var(--lime-ink); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  font: 700 16px/1 var(--f-sans);
   transform: translateY(140%); transition: transform 0.25s ease;
 }
-.sticky b { color: var(--marker); font-weight: 800; }
+.sticky b { font-weight: 800; }
 .shown { transform: none; }
 </style>

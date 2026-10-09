@@ -46,14 +46,14 @@ Plus a short follow-up sequence (4 emails: choosing a broker → standing order 
 
 | Moment | Why there |
 |---|---|
-| **Right under the calculator result** (ad A) | The moment of peak loss-aversion: they just saw a six-figure number. The form label bridges the gap: *"Tahák vám ukáže 12 ETF, se kterými si ten rozdíl necháte"* ("the cheat sheet shows you 12 ETFs that let you keep that money"). |
+| **Right under the calculator result** (ad A) | The moment of peak loss-aversion: they just saw a six-figure number. The form label bridges the gap: *"Tahák s 12 ETF, se kterými si ten rozdíl necháte"* ("the cheat sheet with 12 ETFs that let you keep that money"). |
 | **In the hero** (ad B) | Ad B already promised the cheat sheet; the hero shows 3 of the 12 pairs. Those who decided on the ad can convert in one step. |
 | **Clicking a blurred twin** | Curiosity → scrolls to the form and focuses the input. |
 | **Sticky bottom bar** | Appears after the first screen, hides whenever a form is on screen. |
 | **Final block** | For the scroll-to-the-end readers, after objections are answered. |
 
 **After submitting:**
-- **Instant value, no inbox needed:** "Hotovo ✓ Tahák je váš" ("Done ✓ The cheat sheet is yours") + download button. All twins in the table **unlock in place** (highlight animation). Email delivery is a bonus, not the gate.
+- **Instant value, no inbox needed:** "HOTOVO · Tahák je váš." ("DONE · The cheat sheet is yours.") + download button. All twins in the table **unlock in place** (highlight animation). Email delivery is a bonus, not the gate.
 - **Progressive profiling** (optional, one tap): *"Kolik měsíčně chcete investovat?"* ("How much do you want to invest monthly?"). Asked *after* the conversion, so it costs nothing and segments the leads.
 - **Share loop:** WhatsApp / copy link (*"Znáte někoho, kdo platí bance 2 % ročně?"*, "Know someone paying their bank 2 % a year?"), tagged `utm_source=share`.
 - Returning visitors see *"Tahák už máte ✓"* ("You already have the cheat sheet ✓") instead of forms. No double asks, no double-counted leads.
@@ -77,6 +77,12 @@ Both are designed for Meta (Instagram/Facebook), feed 4:5 and story 9:16 (story 
 Primary text in English. Ad A: *"The average EU equity fund takes 1.9 % a year (ESMA). An S&P 500 ETF costs from 0.03 %. Sounds tiny, but at 5,000 CZK a month it's almost half a million crowns over 20 years. Work out your own number; it takes 10 seconds."* Ad B: *"Wanted to buy VOO, SPY or VT and your broker wouldn't let you? You're not alone. EU retail investors can't buy US ETFs because they lack a KID document. But each one has a European twin on the same index. We put them on one cheat sheet: 12 pairs with ISINs and taxes in a nutshell. Free."*
 
 Each ad has **its own URL**: `/` for A, `/dvojcata` for B. Both are pre-rendered static pages built from the same section components in a different order, so there's no flicker and no client-side switching. The `utm_content` still distinguishes feed vs. story creatives in the funnel.
+
+### Design: "Burza naživo"
+
+The page looks and moves like a trading app: near-black ground, **lime for what you can buy and every action**, **coral for losses and what's blocked**, Bricolage Grotesque for words and JetBrains Mono for every number. A sticky ticker tape scrolls the real ETF pairs (on `/dvojcata` it scrolls what brokers block), a pulsing dot says the data is live, the loss number has a blinking cursor, and the bars re-animate on every tap. The point: the visitor should feel they're already inside the thing they came for, not reading a brochure about it. The ads use the same look, so the first screen continues straight from the ad.
+
+It was picked from four interactive directions (trading terminal, pop-art, banknote, chat); see [`docs/PLAN.md`](docs/PLAN.md) for the comparison. All motion is CSS and respects "reduce motion".
 
 ## 5. Why the sections are in this order
 
@@ -164,7 +170,7 @@ Ad B should land a bit lower (7–10 %): it's less interactive, but the leads ha
 
 | # | Hypothesis | Change | Expected | Metric |
 |---|---|---|---|---|
-| **1** | **Offer framing.** A *personal* deliverable feels more valuable than a generic PDF. | Ad A: "Pošleme vám váš výpočet + 3 ETF pro vaši částku" ("We'll send you your calculation + 3 ETFs for your amount", personalised report) vs "Pošlete mi tahák" ("Send me the cheat sheet", generic). | **+20–30 %** relative visit→lead. The offer is usually the biggest lever on a lead-magnet page. | `lead_ok / lp_view`; secondary: email open rate |
+| **1** | **Offer framing.** A *personal* deliverable feels more valuable than a generic PDF. | Ad A: "Pošleme vám váš výpočet + 3 ETF pro vaši částku" ("We'll send you your calculation + 3 ETFs for your amount", personalised report) vs "Chci tahák →" ("I want the cheat sheet", generic). | **+20–30 %** relative visit→lead. The offer is usually the biggest lever on a lead-magnet page. | `lead_ok / lp_view`; secondary: email open rate |
 | **2** | **Ask timing.** For ad B, asking in the hero catches the decided; asking after proof (the table) persuades the undecided. Which group is bigger is genuinely unknown. | `ask=early` (form in hero) vs `ask=late` (hero button → table → form). **Already implemented:** set env `PUBLIC_EXP_ASK=on` and redeploy. | **±10–20 %**, direction unknown, which is exactly why to test it | `lead_ok / lp_view` + share of leads answering the profile question (quality proxy) |
 | **3** | **Anxiety microcopy.** Czech distrust of advisors is the main hesitation at the form. | "Žádné telefonáty, žádný poradce" vs a neutral line (or later, a real counter "Stáhlo už 3 214 lidí"; never fake). | **+5–10 %** relative `form_start → lead` | `lead_ok / form_start` |
 
@@ -214,7 +220,7 @@ src/
   stores/                        ← state shared between islands (nanostores): "signed up?", calculator values
   data/etfs.json + etfs.ts       ← generated data + its TypeScript types
   config.ts                      ← public settings, all from env vars
-  styles/global.css              ← design tokens + shared primitives (buttons, chips, the paper "slip")
+  styles/global.css              ← design tokens (colours, fonts) + shared primitives (buttons, chips, cards, live dot)
 marketing/                       ← sources for things that aren't the page: ad creatives (HTML), PDF template
 scripts/                         ← fetch-data.mjs (live data), render.mjs (PDF + ad PNGs via headless Chrome)
 tests/unit/                      ← Vitest: calculator + email logic

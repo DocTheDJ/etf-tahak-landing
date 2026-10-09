@@ -46,7 +46,7 @@ const whatsapp = () =>
 
 <template>
   <div ref="panel" class="done" tabindex="-1">
-    <p class="kicker">Hotovo ✓</p>
+    <p class="kicker"><span class="live-dot"></span>HOTOVO</p>
     <p class="title">Tahák je váš.</p>
     <a class="btn btn--primary btn--block" :href="config.pdfUrl" download @click="track('pdf_download', { from: 'done' })">
       Stáhnout tahák (PDF, 2 strany)
@@ -76,13 +76,14 @@ const whatsapp = () =>
 </template>
 
 <style scoped>
-.done { background: var(--paper-2); border: var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 18px 16px; outline: none; }
-.kicker { font: 600 26px/1 var(--f-hand); color: var(--green); margin: 0; }
-.title { font-weight: 880; font-variation-settings: "wdth" 74; font-size: 32px; line-height: 1; margin: 2px 0 14px; }
-.note { font-size: 14.5px; color: var(--ink-2); margin: 10px 0 0; }
-.block { margin-top: 18px; padding-top: 14px; border-top: 1.5px dashed var(--ink); }
-.q { font-weight: 700; margin: 0 0 10px; font-size: 15.5px; }
-.thanks { font-weight: 700; color: var(--green); margin: 0; }
+.done { background: var(--surface); border: 1px solid var(--lime); border-radius: var(--r-lg); padding: 18px 16px; outline: none; animation: rise 0.35s ease-out both; }
+.kicker { display: flex; align-items: center; gap: 8px; font: 700 12px/1 var(--f-mono); letter-spacing: 0.08em; color: var(--lime); margin: 0; }
+.title { font-weight: 800; font-size: 32px; letter-spacing: -0.03em; line-height: 1; margin: 8px 0 14px; }
+.note { font-size: 14px; color: var(--text-2); margin: 10px 0 0; }
+.note a { color: var(--lime); }
+.block { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.q { font-weight: 700; margin: 0 0 10px; font-size: 15px; }
+.thanks { font-weight: 700; color: var(--lime); margin: 0; }
 .share { display: flex; flex-wrap: wrap; gap: 8px; }
 .share .q { width: 100%; margin-bottom: 4px; }
 </style>

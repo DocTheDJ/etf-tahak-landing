@@ -48,10 +48,10 @@ test("ad A (fees): calculator first, typo fix, sign-up unlocks the table", async
   await hydrated(page, "LeadForm");
   const form = page.locator('form[data-loc="calculator"]');
   await form.getByRole("textbox").fill("jana.novakova@sezanm.cz");
-  await form.getByRole("button", { name: "Pošlete mi tahák" }).click();
+  await form.getByRole("button", { name: "Chci tahák →" }).click();
   await form.getByRole("button", { name: "jana.novakova@seznam.cz" }).click();
   await expect(form.getByRole("textbox")).toHaveValue("jana.novakova@seznam.cz");
-  await form.getByRole("button", { name: "Pošlete mi tahák" }).click();
+  await form.getByRole("button", { name: "Chci tahák →" }).click();
 
   await expect(page.getByText("Tahák je váš.")).toBeVisible();
   await expect(page.getByRole("link", { name: /Stáhnout tahák \(PDF/ })).toHaveAttribute("href", "/tahak/etf-tahak-2026.pdf");
@@ -75,13 +75,13 @@ test("ad B (twins): the ad's pairs first, sign-up in the hero", async ({ page })
 
   await page.goto(`/dvojcata?${AD_PARAMS}&utm_content=twins-feed`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("VOO z Česka nekoupíte. Jeho dvojče ano.");
-  for (const twin of ["VUAA", "SPYL", "VWCE"]) await expect(page.locator(".pairs")).toContainText(twin);
+  for (const twin of ["VUAA", "SPYL", "VWCE"]) await expect(page.locator(".book")).toContainText(twin);
   await noHorizontalScroll(page);
 
   await hydrated(page, "LeadForm");
   const form = page.locator('form[data-loc="hero_twins"]');
   await form.getByRole("textbox").fill("petr@email.cz");
-  await form.getByRole("button", { name: "Chci tahák zdarma" }).click();
+  await form.getByRole("button", { name: "Chci je →" }).click();
   await expect(page.getByText("Tahák je váš.")).toBeVisible();
   expect(errors).toEqual([]);
 });

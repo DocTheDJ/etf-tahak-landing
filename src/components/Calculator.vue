@@ -46,10 +46,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="slip calc">
+  <div class="card calc">
     <fieldset class="field">
-      <legend>Kolik měsíčně investujete? <span class="unit">Kč</span></legend>
-      <div class="chips">
+      <legend>Měsíčně investuji <span class="unit">Kč</span></legend>
+      <div class="chips chips--fill">
         <button
           v-for="a in AMOUNTS" :key="a" type="button" class="chip" :class="{ 'is-on': monthly === a }"
           @click="monthly = a; changed('monthly', a)"
@@ -58,8 +58,8 @@ onMounted(() => {
     </fieldset>
 
     <fieldset class="field">
-      <legend>Na jak dlouho?</legend>
-      <div class="chips">
+      <legend>Po dobu</legend>
+      <div class="chips chips--fill">
         <button
           v-for="y in YEARS" :key="y" type="button" class="chip" :class="{ 'is-on': years === y }"
           @click="years = y; changed('years', y)"
@@ -68,7 +68,7 @@ onMounted(() => {
     </fieldset>
 
     <div class="field">
-      <label for="fee">Kolik ročně platíte teď? <output class="mono">{{ pct(fee, 1) }}</output></label>
+      <label for="fee">Můj fond si bere ročně <output class="mono">{{ pct(fee, 1) }}</output></label>
       <input id="fee" v-model.number="fee" type="range" min="0.5" max="3" step="0.1" @change="changed('fee', fee)" />
       <p class="hint">
         {{ isEsmaDefault ? "1,9 % = průměrné celkové náklady akciových fondů v EU (ESMA)" : "Celkové roční náklady najdete v dokumentu KID svého fondu." }}
@@ -76,45 +76,52 @@ onMounted(() => {
     </div>
 
     <div ref="resultEl" class="result" aria-live="polite">
-      <p class="label">Za {{ years }} let vás poplatky stojí navíc</p>
-      <p class="big mono">{{ result.loss > 0 ? "−" + czk(result.loss) : "0 Kč" }}</p>
+      <p class="label">Za {{ years }} let vás fond oproti ETF stojí</p>
+      <!-- :key replays the entrance animation whenever the number changes -->
+      <p :key="result.loss" class="big mono">{{ result.loss > 0 ? "−" + czk(result.loss) : "0 Kč" }}<span class="caret" aria-hidden="true">_</span></p>
       <div class="bars">
-        <div class="bar bar--fund">
-          <span class="fill" :style="{ width: (result.fund / barMax) * 100 + '%' }" />
-          <span class="txt">Fond <b>{{ pct(fee, 1) }}</b> <span class="mono">{{ czk(result.fund) }}</span></span>
+        <div class="bar">
+          <span class="name">fond {{ pct(fee, 1) }}</span>
+          <span class="track"><span :key="'f' + result.fund" class="fill fill--fund" :style="{ width: (result.fund / barMax) * 100 + '%' }" /></span>
+          <span class="val">{{ czk(result.fund) }}</span>
         </div>
-        <div class="bar bar--etf">
-          <span class="fill" :style="{ width: (result.etf / barMax) * 100 + '%' }" />
-          <span class="txt">ETF <b>{{ pct(etfFee) }}</b> <span class="mono">{{ czk(result.etf) }}</span></span>
+        <div class="bar">
+          <span class="name">ETF {{ pct(etfFee) }}</span>
+          <span class="track"><span :key="'e' + result.etf" class="fill fill--etf" :style="{ width: (result.etf / barMax) * 100 + '%' }" /></span>
+          <span class="val">{{ czk(result.etf) }}</span>
         </div>
       </div>
       <p class="fine">
         Vloženo celkem <span class="mono">{{ czk(result.paid) }}</span>. Předpoklad: trh vydělá {{ GROSS_RETURN }} % ročně před poplatky.
-        ETF = evropské dvojče VOO ({{ etfTicker }}, {{ pct(etfFee) }}). Minulé výnosy nezaručují budoucí.
+        ETF = evropské dvojče VOO ({{ etfTicker }}). Minulé výnosy nezaručují budoucí.
       </p>
     </div>
   </div>
 </template>
 
 <style scoped>
-.calc { margin: 6px 0 22px; padding-top: 14px; }
-.calc::before { left: 18%; }
-.field { border: 0; margin: 0 0 12px; padding: 0; min-width: 0; }
-.field legend, .field label { display: block; font-weight: 700; font-size: 15px; margin: 0 0 8px; padding: 0; }
-.unit { font-weight: 500; color: var(--ink-3); }
-.field output { float: right; font-weight: 700; background: var(--ink); color: var(--marker); padding: 2px 7px; border-radius: 3px; font-size: 14px; }
-.hint { font-size: 12.5px; color: var(--ink-3); margin: 2px 0 0; line-height: 1.35; }
-input[type="range"] { width: 100%; height: 30px; accent-color: var(--ink); margin: 0; }
+.calc { margin: 4px 0 18px; display: flex; flex-direction: column; gap: 14px; }
+.field { border: 0; margin: 0; padding: 0; min-width: 0; }
+.field legend, .field label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 8px; padding: 0; }
+.unit { opacity: 0.7; }
+.field output { float: right; font-weight: 700; background: var(--lime); color: var(--lime-ink); padding: 2px 7px; border-radius: 6px; font-size: 13px; }
+.hint { font-size: 12px; color: var(--muted); margin: 4px 0 0; line-height: 1.35; }
+input[type="range"] { width: 100%; height: 28px; accent-color: var(--lime); margin: 0; }
 
-.result { border-top: 2px dashed var(--ink); margin: 2px -16px 0; padding: 12px 16px 2px; }
-.label { margin: 0; font-weight: 600; font-size: 15px; color: var(--ink-2); }
-.big { margin: 2px 0 10px; color: var(--red); font-weight: 700; font-size: clamp(38px, 12vw, 56px); line-height: 1.05; letter-spacing: -0.03em; }
-.bars { display: grid; gap: 6px; }
-.bar { position: relative; height: 36px; border: var(--line); border-radius: 3px; background: #fff; overflow: hidden; }
-.fill { position: absolute; inset: 0 auto 0 0; transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.bar--fund .fill { background: repeating-linear-gradient(-45deg, #f2c6c2 0 6px, #f8dcd9 6px 12px); }
-.bar--etf .fill { background: var(--marker); }
-.txt { position: relative; display: flex; align-items: center; height: 100%; padding: 0 10px; font-size: 14px; gap: 6px; }
-.txt .mono { font-weight: 700; margin-left: auto; }
-.fine { font-size: 12.5px; color: var(--ink-3); line-height: 1.4; margin: 10px 0 4px; }
+.result { border-top: 1px dashed var(--line); padding-top: 14px; }
+.label { margin: 0; font-size: 13px; color: var(--muted); }
+.big {
+  margin: 4px 0 12px; color: var(--coral); font-weight: 700; font-size: clamp(38px, 11.5vw, 52px);
+  line-height: 1; letter-spacing: -0.04em; animation: rise 0.35s ease-out both;
+}
+.bars { display: flex; flex-direction: column; gap: 8px; font: 500 12px/1 var(--f-mono); }
+.bar { display: flex; align-items: center; gap: 8px; }
+.name { width: 74px; color: var(--muted); flex: none; }
+.track { flex: 1; height: 10px; border-radius: 5px; background: var(--surface-2); overflow: hidden; }
+.fill { display: block; height: 100%; border-radius: 5px; transform-origin: left center; animation: grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.fill--fund { background: var(--coral); }
+.fill--etf { background: var(--lime); }
+.val { width: 92px; text-align: right; flex: none; }
+.fine { font-size: 12px; color: var(--muted); line-height: 1.45; margin: 12px 0 0; }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 </style>

@@ -108,41 +108,42 @@ const tone = (x: number | null) => (x == null ? "" : x >= 0 ? "pos" : "neg");
 </template>
 
 <style scoped>
-.filters { display: flex; gap: 8px; overflow-x: auto; margin: 0 calc(var(--gut) * -1); padding: 2px var(--gut) 8px; scrollbar-width: none; }
+.filters { display: flex; gap: 6px; overflow-x: auto; margin: 0 calc(var(--gut) * -1); padding: 2px var(--gut) 8px; scrollbar-width: none; }
 .filters::-webkit-scrollbar { display: none; }
-.filters .chip { flex: none; }
-.sort { font-size: 14px; color: var(--ink-2); margin: 4px 0 12px; }
+.filters .chip { flex: none; font-family: var(--f-sans); font-size: 14px; }
+.sort { font-size: 13px; color: var(--muted); margin: 4px 0 12px; }
 
 .etfs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.etf { background: var(--paper-2); border: var(--line); border-radius: var(--r); padding: 10px 12px 0; overflow: hidden; }
+.etf { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 12px 14px 0; overflow: hidden; }
 .top { display: flex; align-items: baseline; gap: 10px; }
-.ticker { font: 700 21px/1 var(--f-mono); text-decoration-color: var(--red); text-decoration-thickness: 2.5px; color: var(--ink-2); flex: none; }
-.name { font-size: 12.5px; color: var(--ink-3); line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0 10px; }
-.stats div { display: flex; flex-direction: column; }
-.stats span { font-size: 11.5px; color: var(--ink-3); line-height: 1.2; }
+.ticker { font: 700 20px/1 var(--f-mono); color: var(--coral); text-decoration-thickness: 2px; flex: none; }
+.name { font-size: 12.5px; color: var(--muted); line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0 12px; }
+.stats div { display: flex; flex-direction: column; gap: 2px; }
+.stats span { font-size: 11px; color: var(--muted); line-height: 1.2; }
 .stats b { font: 700 15px/1.3 var(--f-mono); }
-.stats .pos { color: var(--green); }
-.stats .neg { color: var(--red); }
+.stats .pos { color: var(--lime); }
+.stats .neg { color: var(--coral); }
 
 .twin {
-  border-top: 1.5px dashed var(--ink); margin: 0 -12px; padding: 9px 12px 10px; background: var(--marker-soft);
-  display: grid; grid-template-columns: auto auto 1fr; gap: 0 9px; align-items: center; min-height: 54px;
+  border-top: 1px dashed var(--line); margin: 0 -14px; padding: 10px 14px 12px; background: var(--surface-2);
+  display: grid; grid-template-columns: auto auto 1fr; gap: 0 10px; align-items: center; min-height: 56px;
 }
 .twin--locked { grid-template-columns: auto auto 1fr auto; }
-.arrow { font-size: 18px; }
-.twin-ticker { font: 700 19px/1.1 var(--f-mono); color: var(--green); background: linear-gradient(transparent 55%, var(--marker) 55%); padding: 0 2px; }
-.meta { font: 500 12px/1.4 var(--f-mono); color: var(--ink-2); min-width: 0; }
-.meta b { color: var(--ink); }
+.arrow { font-size: 18px; color: var(--muted); }
+.twin-ticker { font: 700 19px/1.1 var(--f-mono); color: var(--lime); }
+.meta { font: 500 11.5px/1.45 var(--f-mono); color: var(--muted); min-width: 0; }
+.meta b { color: var(--text); }
 .twin--locked .meta { display: none; }
 @media (min-width: 400px) { .twin--locked .meta { display: block; } }
 .unlock {
   -webkit-appearance: none; appearance: none; cursor: pointer; justify-self: end;
-  display: inline-flex; align-items: center; gap: 5px;
-  background: var(--ink); color: var(--marker); border: 0; border-radius: 999px;
-  font: 700 13px/1 var(--f-sans); padding: 0 12px; min-height: 36px; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--lime); color: var(--lime-ink); border: 0; border-radius: 999px;
+  font: 800 13px/1 var(--f-sans); padding: 0 14px; min-height: 40px; white-space: nowrap;
 }
+.unlock:hover { background: #fff; }
 .just-unlocked .twin { animation: unlock 1.2s ease; }
-@keyframes unlock { from { background: var(--marker); } to { background: var(--marker-soft); } }
+@keyframes unlock { from { background: rgba(212, 255, 58, 0.35); } to { background: var(--surface-2); } }
 .more { margin-top: 12px; }
 </style>

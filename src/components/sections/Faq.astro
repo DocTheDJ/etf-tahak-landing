@@ -41,11 +41,11 @@ const items = [
 </script>
 
 <style>
-  details { border-bottom: 1.5px solid var(--ink); }
-  details:first-of-type { border-top: 1.5px solid var(--ink); }
-  summary { cursor: pointer; list-style: none; padding: 15px 30px 15px 0; font-weight: 750; font-size: 17px; position: relative; }
+details { border-bottom: 1px solid var(--line); }
+  details:first-of-type { border-top: 1px solid var(--line); }
+  summary { cursor: pointer; list-style: none; padding: 16px 32px 16px 0; font-weight: 700; font-size: 17px; position: relative; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; position: absolute; right: 4px; top: 11px; font: 700 22px/1 var(--f-mono); }
-  details[open] summary::after { content: "−"; }
-  p { margin: 0 0 16px; color: var(--ink-2); font-size: 16px; }
+  summary::after { content: "+"; position: absolute; right: 4px; top: 13px; font: 700 20px/1 var(--f-mono); color: var(--lime); transition: transform 0.2s ease; }
+  details[open] summary::after { transform: rotate(45deg); }
+  p { margin: 0 0 16px; color: var(--text-2); font-size: 15.5px; }
 </style>

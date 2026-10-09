@@ -1,27 +1,36 @@
-/* Ad creatives, rendered to PNG by scripts/render.mjs. ?f=feed (1080x1350) | ?f=story (1080x1920) */
+/* Ad creatives in the "Burza naživo" look, rendered to PNG by scripts/render.mjs.
+   ?f=feed (1080x1350) | ?f=story (1080x1920). Everything is 2.77× the 390 px phone design. */
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
   width: 1080px; height: 1350px; overflow: hidden; position: relative;
-  background-color: #f3efe6;
-  background-image: linear-gradient(rgba(60,90,140,.10) 2px, transparent 2px), linear-gradient(90deg, rgba(60,90,140,.10) 2px, transparent 2px);
-  background-size: 54px 54px;
-  color: #16140f; font-family: "Archivo", sans-serif;
-  display: flex; flex-direction: column; padding: 84px 84px 72px;
+  background: #0e0f12; color: #f4f5f7; font-family: "Bricolage Grotesque", sans-serif;
+  display: flex; flex-direction: column;
 }
-body.story { height: 1920px; padding: 290px 84px 390px; } /* keep clear of story UI (top ~14 %, bottom ~20 %) */
-.logo { display: inline-flex; transform: rotate(-2deg); align-self: flex-start; }
-.logo i { font: 700 30px/1 "JetBrains Mono"; background: #16140f; color: #ffe45c; padding: 12px 12px 10px; font-style: normal; display: flex; align-items: center; }
-.logo b { font-weight: 850; font-variation-settings: "wdth" 80; font-size: 44px; line-height: 1; border: 4px solid #16140f; border-left: 0; padding: 4px 16px 6px 12px; background: #fbf9f4; }
-h1 { font-weight: 880; font-variation-settings: "wdth" 70; font-size: 116px; line-height: .95; letter-spacing: -.01em; margin: 56px 0 0; }
-mark { background: linear-gradient(100deg, transparent 6px, #ffe45c 6px, #ffe45c calc(100% - 4px), transparent calc(100% - 4px)); background-size: 100% 60%; background-position: 0 80%; background-repeat: no-repeat; color: inherit; padding: 0 6px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.sub { font-size: 44px; line-height: 1.25; color: #4a463d; margin: 30px 0 0; }
-.hand { font: 600 64px/1 "Caveat"; color: #c8281f; position: absolute; white-space: nowrap; }
+.tape {
+  height: 84px; flex: none; overflow: hidden; display: flex; align-items: center; gap: 56px; white-space: nowrap;
+  padding-left: 40px; font: 700 34px/1 "JetBrains Mono", monospace; color: #0e0f12;
+}
+.tape--lime { background: #d4ff3a; }
+.tape--coral { background: #ff5a4e; }
+.tape i { font-style: normal; opacity: 0.55; }
+.inner { flex: 1; display: flex; flex-direction: column; padding: 44px 72px 48px; }
+body.story { height: 1920px; }
+body.story .inner { padding: 200px 72px 360px; } /* keep clear of story UI (top ~14 %, bottom ~20 %) */
+.top { display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 54px; letter-spacing: -0.02em; }
+.logo span:first-child { width: 72px; height: 72px; border-radius: 18px; background: #d4ff3a; color: #0e0f12; display: flex; align-items: center; justify-content: center; font: 700 26px/1 "JetBrains Mono", monospace; }
+.live { display: flex; align-items: center; gap: 18px; font: 500 28px/1 "JetBrains Mono", monospace; color: #9ba1ad; }
+.live b { width: 22px; height: 22px; border-radius: 50%; background: #d4ff3a; box-shadow: 0 0 0 10px rgba(212, 255, 58, 0.22); }
+.eyebrow { margin: 40px 0 16px; font: 500 32px/1 "JetBrains Mono", monospace; letter-spacing: 0.08em; color: #d4ff3a; }
+.eyebrow--coral { color: #ff5a4e; }
+h1 { margin: 0; font-weight: 800; font-size: 112px; line-height: 0.96; letter-spacing: -0.04em; }
+.lime { color: #d4ff3a; }
+.coral { color: #ff5a4e; }
+.card { background: #17191f; border: 3px solid #2a2d36; border-radius: 48px; }
 .cta {
-  margin-top: auto; align-self: stretch; display: flex; justify-content: space-between; align-items: center;
-  background: #ffe45c; border: 5px solid #16140f; box-shadow: 10px 10px 0 #16140f; border-radius: 8px;
-  padding: 34px 40px; font-weight: 850; font-variation-settings: "wdth" 85; font-size: 54px;
+  margin-top: auto; display: flex; justify-content: space-between; align-items: center;
+  background: #d4ff3a; color: #0e0f12; border-radius: 40px; padding: 32px 44px;
+  font-weight: 800; font-size: 50px; letter-spacing: -0.02em;
 }
-.fine { font-size: 24px; line-height: 1.35; color: #7b766a; margin: 34px 0 0; }
-.slip { background: #fbf9f4; border: 5px solid #16140f; box-shadow: 10px 10px 0 #16140f; border-radius: 8px; position: relative; }
-.slip::before { content: ""; position: absolute; top: -26px; left: 50%; width: 190px; height: 50px; margin-left: -95px; background: rgba(255,228,92,.8); transform: rotate(-3deg); }
+.fine { margin: 22px 0 0; font-size: 23px; line-height: 1.4; color: #9ba1ad; }

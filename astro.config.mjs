@@ -11,6 +11,7 @@ export default defineConfig({
   site: "https://etf-tahak-landing.vercel.app",
   integrations: [vue()],
   adapter: vercel(),
+  devToolbar: { enabled: false },
 
   // Every environment variable the project uses, in one place. All optional: the site works without them.
   // Set them in Vercel → Settings → Environment Variables (see .env.example).

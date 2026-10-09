@@ -1,0 +1,35 @@
+---
+// The scrolling tape at the very top: the page's "live market" signal.
+// "pairs": each US ETF and its buyable twin (fees page). "blocked": what EU brokers refuse (twins page).
+// Content is duplicated once so the loop is seamless; it's decorative (the table carries the same data).
+import { etfs } from "@/data/etfs";
+import { pct } from "@/lib/format";
+
+interface Props { mode: "pairs" | "blocked" }
+const { mode } = Astro.props;
+
+const items =
+  mode === "pairs"
+    ? etfs.filter((e, i, all) => all.findIndex((x) => x.twin.isin === e.twin.isin) === i) // one entry per twin
+        .map((e) => `${e.ticker} ${pct(e.er)} → ${e.twin.ticker} ${pct(e.twin.ter)}`)
+    : etfs.map((e, i) => `${e.ticker} ✕ ${i % 2 ? "CHYBÍ KID" : "BLOKOVÁNO"}`);
+---
+
+<div class:list={["tape", `tape--${mode}`]} aria-hidden="true">
+  <div class="track" style={`--dur: ${items.length * 3.2}s`}>
+    {[0, 1].map(() => items.map((t) => (<><span>{t}</span><span class="sep">●</span></>)))}
+  </div>
+</div>
+
+<style>
+  .tape { height: 34px; overflow: hidden; display: flex; align-items: center; position: sticky; top: 0; z-index: 15; }
+  .tape--pairs { background: var(--lime); color: var(--lime-ink); }
+  .tape--blocked { background: var(--coral); color: var(--lime-ink); }
+  .track {
+    display: flex; gap: 22px; white-space: nowrap; padding-left: 16px;
+    font: 700 13px/1 var(--f-mono);
+    animation: tape var(--dur) linear infinite;
+  }
+  .sep { opacity: 0.55; }
+  @keyframes tape { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>

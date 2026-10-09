@@ -9,8 +9,8 @@ import { ESMA_FUND_COST } from "@/lib/calc";
 ---
 
 <section class="sec sec--first" data-sec="calculator">
-  <p class="eyebrow">Kalkulačka · 10 vteřin</p>
-  <h1 class="h1">Kolik vám <mark>sežerou poplatky?</mark></h1>
+  <p class="eyebrow">Kalkulačka / 10 vteřin</p>
+  <h1 class="h1">Kolik vám <span class="t-lime">sežerou</span> <span class="t-coral">poplatky?</span></h1>
   <p class="lede">
     Průměrný fond v EU stojí <b>{pct(ESMA_FUND_COST, 1)} ročně</b>, ETF na S&amp;P 500 od <b>0,03 %</b>. Rozdíl vypadá malý. Není.
   </p>
@@ -20,7 +20,7 @@ import { ESMA_FUND_COST } from "@/lib/calc";
   <LeadForm
     client:load
     loc="calculator"
-    label="Tahák vám ukáže 12 ETF, se kterými si ten rozdíl necháte. Kam ho poslat?"
-    button="Pošlete mi tahák"
+    label="Tahák s 12 ETF, se kterými si ten rozdíl necháte"
+    button="Chci tahák →"
   />
 </section>

@@ -73,3 +73,16 @@ After review, the plain HTML/JS version was hard to navigate (one 400-line `app.
 | Ad-hoc test script | Vitest unit tests + Playwright e2e in the repo, run in CI |
 
 Found and fixed along the way: the typo suggester turned `gmail.cz` into `email.cz` (now fixes the ending of a known provider first), and a Vue hydration mismatch when a visitor signed up before the table below had loaded.
+
+## Third iteration: design direction "Burza naživo"
+
+Four directions were explored as interactive phone mockups (live trading terminal, pop-art comic, banknote, chat). Chosen: **A · Burza naživo**, because it makes the visitor feel they're already where they want to be: inside a trading app, looking at live markets. The paper cheat-sheet look was replaced across the page, the ads, the OG image, the email and the PDF (the PDF stays white for printing, with the same fonts and accents).
+
+| | Before ("tahák" paper) | After ("Burza naživo") |
+|---|---|---|
+| Ground | Squared cream paper | Near-black `#0E0F12` |
+| Accents | Highlighter yellow, red pen, green | Lime `#D4FF3A` = buyable / action, coral `#FF5A4E` = loss / blocked |
+| Type | Archivo + Caveat handwriting | Bricolage Grotesque + JetBrains Mono for every number |
+| Motion | Almost none | Scrolling ticker tape of the real pairs (sticky), pulsing live-data dot, blinking cursor on the loss, bars and the loss number re-animate on every tap, order-book rows slide in, the cheaper twin flashes |
+
+All motion is CSS and stops for visitors with "reduce motion" enabled.

@@ -14,7 +14,7 @@ const preview = ["VOO", "IVV", "SPY", "VT", "SCHD"].map(byTicker);
         <div class="row"><span>{e.ticker}</span><span>→</span><span class="hl">{e.twin.ticker}</span></div>
       ))}
       <div class="lines"><i></i><i></i><i></i><i></i></div>
-      <span class="hand tag">2 strany A4</span>
+      <span class="tag">PDF · 2 strany</span>
     </div>
     <ol>
       <li><b>{etfs.length} ETF z NYSE vedle sebe.</b> Poplatek, výnos za 1, 5 a 10 let, dividenda.</li>
@@ -26,26 +26,32 @@ const preview = ["VOO", "IVV", "SPY", "VT", "SCHD"].map(byTicker);
 </section>
 
 <style>
-  .grid { display: grid; grid-template-columns: 112px 1fr; gap: 18px; align-items: start; }
+.grid { display: grid; grid-template-columns: 112px 1fr; gap: 20px; align-items: start; }
   @media (min-width: 720px) { .grid { grid-template-columns: 150px 1fr; gap: 28px; } }
   .paper {
-    background: #fff; border: var(--line); box-shadow: var(--shadow); border-radius: 2px;
-    aspect-ratio: 1 / 1.414; padding: 9px 8px; transform: rotate(-3deg);
-    font: 500 9.5px/1.35 var(--f-mono); position: relative;
+    background: #ffffff; color: #0e0f12; border-radius: 6px;
+    aspect-ratio: 1 / 1.414; padding: 9px 8px; transform: rotate(-4deg);
+    font: 500 9.5px/1.4 var(--f-mono); position: relative;
+    box-shadow: 0 0 0 1px var(--line), 0 18px 40px rgba(0, 0, 0, 0.5);
+    animation: float 4s ease-in-out infinite;
   }
-  .head { font: 800 11px/1.1 var(--f-sans); margin-bottom: 6px; border-bottom: 1px solid var(--ink); padding-bottom: 4px; }
+  .head { font: 800 11px/1.1 var(--f-sans); margin-bottom: 6px; border-bottom: 1px solid #0e0f12; padding-bottom: 4px; }
   .row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3px; }
-  .hl { background: var(--marker); color: var(--green); font-weight: 700; }
+  .hl { background: var(--lime); font-weight: 700; padding: 0 2px; }
   .lines { margin-top: 8px; display: grid; gap: 4px; }
-  .lines i { display: block; height: 3px; background: #e2ddd1; }
+  .lines i { display: block; height: 3px; background: #e3e5ea; }
   .lines i:nth-child(2) { width: 80%; }
   .lines i:nth-child(4) { width: 60%; }
-  .tag { position: absolute; bottom: -14px; right: -12px; font-size: 18px; transform: rotate(6deg); }
-  ol { margin: 0; padding: 0; list-style: none; counter-reset: i; display: grid; gap: 12px; }
-  li { counter-increment: i; position: relative; padding-left: 30px; font-size: 16px; line-height: 1.4; color: var(--ink-2); }
-  li b { color: var(--ink); }
-  li::before {
-    content: counter(i); position: absolute; left: 0; top: 0; width: 21px; height: 21px;
-    border: var(--line); border-radius: 50%; font: 700 12px/19px var(--f-mono); text-align: center; background: var(--marker);
+  .tag {
+    position: absolute; bottom: -12px; right: -14px; transform: rotate(6deg);
+    background: var(--lime); color: var(--lime-ink); font: 700 10px/1 var(--f-mono); padding: 5px 7px; border-radius: 6px; white-space: nowrap;
   }
+  ol { margin: 0; padding: 0; list-style: none; counter-reset: i; display: grid; gap: 14px; }
+  li { counter-increment: i; position: relative; padding-left: 32px; font-size: 15.5px; line-height: 1.45; color: var(--text-2); }
+  li b { color: var(--text); }
+  li::before {
+    content: counter(i, decimal-leading-zero); position: absolute; left: 0; top: 2px;
+    font: 700 12px/1 var(--f-mono); color: var(--lime);
+  }
+  @keyframes float { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(-3deg) translateY(-5px); } }
 </style>

@@ -14,7 +14,7 @@ import { $calc } from "@/stores/calc";
 import ThankYou from "./ThankYou.vue";
 
 const props = withDefaults(defineProps<{ loc: string; label: string; button?: string }>(), {
-  button: "Chci tahák zdarma",
+  button: "Chci tahák →",
 });
 
 const leadId = useStore($leadId);
@@ -142,25 +142,22 @@ async function submit() {
 
 <style scoped>
 .lead { margin: 4px 0 0; }
-.label { display: block; font-weight: 750; font-size: 18px; line-height: 1.3; margin: 0 0 10px; }
-.row { display: flex; flex-direction: column; gap: 10px; }
-.row .btn { width: 100%; }
-@media (min-width: 520px) {
-  .row { flex-direction: row; }
-  .row .btn { width: auto; flex: none; }
-}
+.label { display: block; font-weight: 700; font-size: 16px; line-height: 1.3; margin: 0 0 10px; }
+.row { display: flex; gap: 8px; }
 .input {
-  -webkit-appearance: none; appearance: none; width: 100%;
-  min-height: 56px; padding: 0 16px; border: var(--line); border-radius: var(--r);
-  background: #fff; color: var(--ink); font: 500 18px/1 var(--f-mono);
+  -webkit-appearance: none; appearance: none; flex: 1; min-width: 0;
+  min-height: 52px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--text); font: 500 15px/1 var(--f-mono);
 }
-.input::placeholder { color: #a8a294; }
-.input[aria-invalid="true"] { border-color: var(--red); box-shadow: 0 0 0 2px var(--red); }
-.error { color: var(--red); font-weight: 600; margin: 8px 0 0; font-size: 15px; }
-.error button { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; font-weight: 800; }
-.micro { font-size: 13.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.4; }
-.micro a { color: var(--ink-2); }
+.input::placeholder { color: #6b7180; }
+.input:focus { border-color: var(--lime); outline: none; }
+.input[aria-invalid="true"] { border-color: var(--coral); box-shadow: 0 0 0 1px var(--coral); }
+.row .btn { flex: none; }
+.error { color: var(--coral); font-weight: 600; margin: 8px 0 0; font-size: 14px; }
+.error button { font: inherit; color: var(--lime); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; font-weight: 700; }
+.micro { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; line-height: 1.4; }
+.micro a { color: var(--muted); }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-.got-it { font-size: 15px; font-weight: 700; color: var(--green); margin: 4px 0 0; }
-.got-it a { color: var(--ink); }
+.got-it { font-size: 15px; font-weight: 700; color: var(--lime); margin: 4px 0 0; }
+.got-it a { color: var(--text); }
 </style>

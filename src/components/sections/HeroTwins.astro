@@ -1,43 +1,44 @@
 ---
 // First screen for ad B ("Broker vám nedovolil koupit VOO?"): the same three pairs as in the ad,
-// a blurred fourth as a teaser, and the email form.
+// shown like an order book (blocked on the left, buyable on the right), a teaser row, and the email form.
 import LeadForm from "@/components/LeadForm.vue";
 import { byTicker, etfs, FREE_TWINS } from "@/data/etfs";
 import { pct } from "@/lib/format";
 
 const pairs = FREE_TWINS.map(byTicker);
 const teaser = byTicker("SCHD");
-const remaining = etfs.length - pairs.length;
+const remaining = etfs.length - pairs.length - 1;
+const note = (e: ReturnType<typeof byTicker>) =>
+  e.twin.ter < e.er ? null : e.twin.match === "same" ? "stejný index" : e.focus.toLowerCase();
 ---
 
 <section class="sec sec--first" data-sec="hero_twins">
-  <p class="eyebrow">Pro každého, komu broker řekl „ne“</p>
-  <h1 class="h1">VOO z Česka nekoupíte. <mark>Jeho dvojče ano.</mark></h1>
-  <p class="lede">
-    Americké ETF z burzy NYSE nemají evropský dokument KID, a tak je broker drobnému investorovi v EU neprodá. Každé z nich má
-    ale evropské dvojče na stejný index. Některá jsou dokonce levnější.
-  </p>
+  <p class="eyebrow eyebrow--warn">Broker řekl „ne“?</p>
+  <h1 class="h1">VOO z Česka nekoupíte. <span class="t-lime">Jeho dvojče ano.</span></h1>
+  <p class="lede">Americkým ETF chybí evropský dokument KID, a tak je broker drobnému investorovi v EU neprodá. Každé má ale irské dvojče na stejný index.</p>
 
-  <div class="slip pairs" aria-label="Ukázka z taháku">
-    {pairs.map((e) => (
-      <div class="pair">
-        <span class="us"><b>{e.ticker}</b><i>{pct(e.er)}</i></span>
-        <span class="arrow" aria-hidden="true">→</span>
-        <span class="eu"><b>{e.twin.ticker}</b><i>{pct(e.twin.ter)}</i></span>
-        {e.twin.ter < e.er && <span class="hand note">levnější než originál!</span>}
+  <div class="book" aria-label="Ukázka z taháku">
+    <div class="head"><span>USA · NYSE</span><span>EU · XETRA</span></div>
+    {pairs.map((e, i) => (
+      <div class="row" style={`animation-delay: ${i * 0.12}s`}>
+        <span class="us"><b>{e.ticker}</b><small>{pct(e.er)} · nekoupíte</small></span>
+        <span class="eu">
+          <b>{e.twin.ticker} ✓</b>
+          {note(e)
+            ? <small>{pct(e.twin.ter)} · {note(e)}</small>
+            : <small class="flash">{pct(e.twin.ter)} · levnější</small>}
+        </span>
       </div>
     ))}
-    <div class="pair" aria-hidden="true">
-      <span class="us"><b>{teaser.ticker}</b><i>{pct(teaser.er)}</i></span>
-      <span class="arrow">→</span>
-      <span class="eu blur"><b>XXXX</b><i>0,00 %</i></span>
+    <div class="row" style={`animation-delay: ${pairs.length * 0.12}s`} aria-hidden="true">
+      <span class="us"><b>{teaser.ticker}</b><small>{pct(teaser.er)} · nekoupíte</small></span>
+      <span class="eu"><span class="more">+ {remaining} dalších v taháku</span></span>
     </div>
-    <p class="more">+ {remaining - 1} dalších párů s ISINy v taháku</p>
   </div>
 
   <!-- A/B test "ask" (Layout sets data-ask before paint): early = form here, late = button to the proof -->
   <div class="ask-early">
-    <LeadForm client:load loc="hero_twins" label={`Pošleme vám všech ${etfs.length} párů. Kam?`} />
+    <LeadForm client:load loc="hero_twins" label={`Pošleme vám všech ${etfs.length} párů s ISINy`} button="Chci je →" />
   </div>
   <div class="ask-late">
     <a class="btn btn--primary btn--block" href="#srovnani" data-cta="hero_twins_late">Ukázat všech {etfs.length} párů ↓</a>
@@ -45,17 +46,19 @@ const remaining = etfs.length - pairs.length;
 </section>
 
 <style>
-  .pairs { transform: rotate(-0.6deg); margin: 6px 0 22px; padding: 18px 14px 12px; }
-  .pair {
-    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
-    padding: 9px 0; border-bottom: 1px dashed rgba(22, 20, 15, 0.22); position: relative;
-  }
-  .us, .eu { display: flex; align-items: baseline; gap: 8px; font-family: var(--f-mono); }
-  .us b { font-size: 20px; text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 2.5px; color: var(--ink-2); }
-  .eu b { font-size: 20px; color: var(--green); background: linear-gradient(transparent 55%, var(--marker) 55%); padding: 0 2px; }
-  i { font-style: normal; font-size: 13px; color: var(--ink-3); }
-  .arrow { font-size: 20px; }
-  .note { position: absolute; right: -2px; top: -12px; transform: rotate(-4deg); }
-  .more { margin: 6px 0 0; font: 500 13px/1.3 var(--f-mono); color: var(--ink-2); }
+  .book { margin: 4px 0 20px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+  .head, .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 12px 14px; }
+  .head { padding: 10px 14px; font: 500 11px/1 var(--f-mono); color: var(--muted); border-bottom: 1px solid var(--line); }
+  .head span:last-child, .eu { text-align: right; align-items: flex-end; }
+  .row { align-items: center; border-bottom: 1px solid var(--line); animation: slide 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .row:last-child { border-bottom: 0; }
+  .us, .eu { display: flex; flex-direction: column; font-family: var(--f-mono); gap: 2px; }
+  .us b { font-size: 18px; color: var(--coral); text-decoration: line-through; }
+  .eu b { font-size: 18px; color: var(--lime); }
+  small { font-size: 11px; color: var(--muted); }
+  .flash { font-weight: 700; padding: 1px 6px; border-radius: 4px; animation: flash 1.4s ease-in-out infinite; }
+  .more { font: 700 12px/1 var(--f-sans); color: var(--lime-ink); background: var(--text); padding: 7px 10px; border-radius: 999px; }
+  @keyframes slide { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+  @keyframes flash { 0%, 100% { background: var(--lime); color: var(--lime-ink); } 50% { background: transparent; color: var(--lime); } }
   :global([data-ask="early"]) .ask-late, :global([data-ask="late"]) .ask-early { display: none; }
 </style>
