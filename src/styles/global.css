@@ -112,5 +112,19 @@ b { font-weight: 700; }
 }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+/* Light sweep across a button every few seconds (submit when the email is valid, every 🔒 Odemknout).
+   Stagger several with --sheen-delay; pause one with .is-paused (e.g. when scrolled out of view). */
+.sheen { position: relative; overflow: hidden; isolation: isolate; }
+.sheen::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 34%; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: translateX(-150%) skewX(-20deg);
+  animation: sweep 2.6s ease-in-out infinite; animation-delay: var(--sheen-delay, 0s);
+}
+.sheen.is-paused::after { animation-play-state: paused; }
+@keyframes sweep {
+  0%, 55% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(380%) skewX(-20deg); }
+}
 .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); animation: pulse-lime 1.6s ease-out infinite; flex: none; }
 .caret { color: var(--lime); animation: blink 1s steps(1) infinite; }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The comparison: 12 NYSE ETFs with their European twins. Filter, sort, show 6 then all.
 // Twins are blurred until sign-up (except the 3 shown in the hero/ad); a locked twin is a CTA to the form.
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
 import { useStore } from "@nanostores/vue";
 import type { Category, Etf, TwinMatch } from "@/data/etfs";
 import { pct } from "@/lib/format";
@@ -34,6 +34,26 @@ const expanded = ref(false);
 // Unlock state comes from the shared store, applied after mount (the server renders the locked version).
 const leadId = useStore($leadId);
 const mounted = ref(false);
+
+// The 🔒 buttons carry a light sweep (global .sheen), staggered per row so they don't flash in sync,
+// and paused while scrolled out of view so a long list doesn't animate off-screen.
+const listEl = ref<HTMLElement | null>(null);
+let io: IntersectionObserver | null = null;
+function observeUnlocks() {
+  if (!io || !listEl.value) return;
+  io.disconnect();
+  listEl.value.querySelectorAll(".unlock").forEach((b) => io!.observe(b));
+}
+onMounted(() => {
+  if (!("IntersectionObserver" in window)) return;
+  io = new IntersectionObserver((entries) => {
+    for (const e of entries) e.target.classList.toggle("is-paused", !e.isIntersecting);
+  });
+  observeUnlocks();
+});
+onUpdated(observeUnlocks); // filter, sort and "show more" re-render the list
+onBeforeUnmount(() => io?.disconnect());
+const sheenDelay = (i: number) => `${-((i * 0.9) % 2.6).toFixed(1)}s`;
 onMounted(() => (mounted.value = true));
 const unlocked = computed(() => mounted.value && !!leadId.value);
 const isOpen = (e: Etf) => unlocked.value || props.freeTwins.includes(e.ticker);
@@ -72,8 +92,8 @@ const tone = (x: number | null) => (x == null ? "" : x >= 0 ? "pos" : "neg");
     </template>
   </div>
 
-  <ul class="etfs" aria-live="polite">
-    <li v-for="e in visible" :key="e.ticker" class="etf" :class="{ 'just-unlocked': justUnlocked(e) }">
+  <ul ref="listEl" class="etfs" aria-live="polite">
+    <li v-for="(e, i) in visible" :key="e.ticker" class="etf" :class="{ 'just-unlocked': justUnlocked(e) }">
       <div class="top">
         <s class="ticker" :title="`${e.exchange}, z ČR nekoupíte`">{{ e.ticker }}</s>
         <span class="name">{{ e.name }}</span>
@@ -97,7 +117,7 @@ const tone = (x: number | null) => (x == null ? "" : x >= 0 ? "pos" : "neg");
         <!-- placeholder text, not the real twin: the data is behind the email -->
         <span class="twin-ticker blur" aria-hidden="true">XXXX</span>
         <span class="meta blur" aria-hidden="true"><b>0,00 %</b> · xxxxxxxxx<br />ISIN IE000XXXXXXX</span>
-        <button type="button" class="unlock" @click="unlock(e.ticker)">
+        <button type="button" class="unlock sheen" :style="{ '--sheen-delay': sheenDelay(i) }" @click="unlock(e.ticker)">
           <svg width="12" height="13" viewBox="0 0 12 13" aria-hidden="true"><rect x="1" y="5.5" width="10" height="7" rx="1.5" fill="currentColor" /><path d="M3.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
           Odemknout
         </button>

@@ -41,14 +41,23 @@ test("ad A (fees): calculator first, typo fix, sign-up unlocks the table", async
   await hydrated(page, "EtfTable");
   await expect(page.locator(".etfs > li")).toHaveCount(6);
   await expect(page.locator(".twin--locked")).toHaveCount(3);
+  await expect(page.locator(".unlock.sheen")).toHaveCount(3); // light sweep on every 🔒 button
   await page.getByRole("button", { name: /Ukázat dalších 6 ETF/ }).click();
   await expect(page.locator(".etfs > li")).toHaveCount(12);
 
   // typo suggestion, accept it, submit
   await hydrated(page, "LeadForm");
   const form = page.locator('form[data-loc="calculator"]');
+  // empty: a light runs around the field; the button is calm
+  await expect(form.locator(".field")).toHaveClass(/field--run/);
+  await expect(form.getByRole("button", { name: "Chci tahák →" })).not.toHaveClass(/sheen/);
   await form.getByRole("textbox").fill("jana.novakova@sezanm.cz");
+  // valid address: solid lime field with a check, the sweep moves to the button
+  await expect(form.locator(".field")).toHaveClass(/field--ok/);
+  await expect(form.locator(".check")).toBeVisible();
+  await expect(form.getByRole("button", { name: "Chci tahák →" })).toHaveClass(/sheen/);
   await form.getByRole("button", { name: "Chci tahák →" }).click();
+  await expect(form.locator(".field")).toHaveClass(/field--err/); // the typo hint turns the field coral
   await form.getByRole("button", { name: "jana.novakova@seznam.cz" }).click();
   await expect(form.getByRole("textbox")).toHaveValue("jana.novakova@seznam.cz");
   await form.getByRole("button", { name: "Chci tahák →" }).click();
