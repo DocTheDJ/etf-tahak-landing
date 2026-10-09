@@ -58,3 +58,18 @@ Target group, offer, ask moment, ads, section order, expected conversion rate (~
 | (not planned) | Returning visitors see "Tahák už máte ✓" instead of the form | Don't ask twice; don't double-count leads. |
 | (not planned) | Funnel dashboard `/api/stats` | So "track the whole journey" is readable without GA. |
 | (not planned) | Weekly GitHub Action refreshing the data | Fees and returns change; "data k …" must stay true. |
+
+## Second iteration: rebuilt on Astro + Vue
+
+After review, the plain HTML/JS version was hard to navigate (one 400-line `app.js`, HTML built from strings, variants switched with CSS ordering). It was rebuilt on **Astro + Vue + TypeScript**, keeping the design, copy, data, tracking events and strategy unchanged:
+
+| Before (vanilla) | After (Astro + Vue) |
+|---|---|
+| One page, variant picked by an inline script from `utm_content` | Two pre-rendered pages: `/` (ad A) and `/dvojcata` (ad B), each a readable list of sections |
+| `app.js` with `querySelector` + string templates | Vue single-file components: `Calculator`, `EtfTable`, `LeadForm`, `ThankYou`, `StickyCta`, `ConsentBar` |
+| Global flags in `localStorage` read by every script | nanostores shared between islands (`src/stores/`) |
+| `config.js` edited by hand | Typed env schema (`astro:env`): launch settings are Vercel env vars, no code edits |
+| Raw Vercel functions in `api/` + a hand-written dev server | Astro API routes in `src/pages/api/`, `astro dev` |
+| Ad-hoc test script | Vitest unit tests + Playwright e2e in the repo, run in CI |
+
+Found and fixed along the way: the typo suggester turned `gmail.cz` into `email.cz` (now fixes the ending of a known provider first), and a Vue hydration mismatch when a visitor signed up before the table below had loaded.

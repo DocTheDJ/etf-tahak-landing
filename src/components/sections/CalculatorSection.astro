@@ -1,0 +1,12 @@
+---
+// The calculator as a supporting section (twins page). On the fees page the calculator is the hero instead.
+import Calculator from "@/components/Calculator.vue";
+import { CALC_ETF } from "@/data/etfs";
+---
+
+<section class="sec" id="kalkulacka" data-sec="calculator">
+  <p class="eyebrow">Kalkulačka</p>
+  <h2 class="h2">Proč na procentech záleží</h2>
+  <p class="lede">Poplatek se strhává z celé částky každý rok. Za 20 let z toho jsou statisíce.</p>
+  <Calculator client:visible etfTicker={CALC_ETF.ticker} etfFee={CALC_ETF.ter} />
+</section>

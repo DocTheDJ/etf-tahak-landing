@@ -1,0 +1,51 @@
+---
+// "Co je v taháku": makes the lead magnet concrete before the next ask.
+import { byTicker, etfs } from "@/data/etfs";
+
+const preview = ["VOO", "IVV", "SPY", "VT", "SCHD"].map(byTicker);
+---
+
+<section class="sec" data-sec="inside">
+  <h2 class="h2">Co je v taháku</h2>
+  <div class="grid">
+    <div class="paper" aria-hidden="true">
+      <div class="head"><b>ETF tahák</b> 2026</div>
+      {preview.map((e) => (
+        <div class="row"><span>{e.ticker}</span><span>→</span><span class="hl">{e.twin.ticker}</span></div>
+      ))}
+      <div class="lines"><i></i><i></i><i></i><i></i></div>
+      <span class="hand tag">2 strany A4</span>
+    </div>
+    <ol>
+      <li><b>{etfs.length} ETF z NYSE vedle sebe.</b> Poplatek, výnos za 1, 5 a 10 let, dividenda.</li>
+      <li><b>Evropské dvojče ke každému.</b> Ticker, ISIN a poplatek. Stačí zkopírovat do aplikace brokera.</li>
+      <li><b>Daně na jedné straně.</b> Časový test 3 roky, limit 100 000 Kč, formulář W-8BEN a DIP.</li>
+      <li><b>5 kroků k prvnímu nákupu.</b> Od výběru indexu po trvalý příkaz.</li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .grid { display: grid; grid-template-columns: 112px 1fr; gap: 18px; align-items: start; }
+  @media (min-width: 720px) { .grid { grid-template-columns: 150px 1fr; gap: 28px; } }
+  .paper {
+    background: #fff; border: var(--line); box-shadow: var(--shadow); border-radius: 2px;
+    aspect-ratio: 1 / 1.414; padding: 9px 8px; transform: rotate(-3deg);
+    font: 500 9.5px/1.35 var(--f-mono); position: relative;
+  }
+  .head { font: 800 11px/1.1 var(--f-sans); margin-bottom: 6px; border-bottom: 1px solid var(--ink); padding-bottom: 4px; }
+  .row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3px; }
+  .hl { background: var(--marker); color: var(--green); font-weight: 700; }
+  .lines { margin-top: 8px; display: grid; gap: 4px; }
+  .lines i { display: block; height: 3px; background: #e2ddd1; }
+  .lines i:nth-child(2) { width: 80%; }
+  .lines i:nth-child(4) { width: 60%; }
+  .tag { position: absolute; bottom: -14px; right: -12px; font-size: 18px; transform: rotate(6deg); }
+  ol { margin: 0; padding: 0; list-style: none; counter-reset: i; display: grid; gap: 12px; }
+  li { counter-increment: i; position: relative; padding-left: 30px; font-size: 16px; line-height: 1.4; color: var(--ink-2); }
+  li b { color: var(--ink); }
+  li::before {
+    content: counter(i); position: absolute; left: 0; top: 0; width: 21px; height: 21px;
+    border: var(--line); border-radius: 50%; font: 700 12px/19px var(--f-mono); text-align: center; background: var(--marker);
+  }
+</style>

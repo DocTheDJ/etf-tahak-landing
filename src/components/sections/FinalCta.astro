@@ -1,0 +1,18 @@
+---
+// The last ask, for visitors who read to the end. The sticky bar and the locked twins scroll here.
+import LeadForm from "@/components/LeadForm.vue";
+---
+
+<section class="sec final" id="tahak" data-sec="final">
+  <h2 class="h2">Celý tahák na 2 strany. <mark>Přečtete ho za jednu cestu tramvají.</mark></h2>
+  <div class="box">
+    <LeadForm client:visible loc="final" label="Kam vám ho poslat?" />
+  </div>
+</section>
+
+<style>
+  .final { padding-bottom: 36px; }
+  .box { background: var(--paper-2); border: var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; }
+  /* after sign-up the form becomes the thank-you panel, which has its own frame */
+  .box:has(.done) { background: none; border: 0; box-shadow: none; padding: 0; }
+</style>

@@ -1,0 +1,17 @@
+---
+import Logo from "./Logo.astro";
+import { data } from "@/data/etfs";
+import { czDate } from "@/lib/format";
+---
+
+<header class="wrap top">
+  <a href="/" aria-label="ETF tahák"><Logo /></a>
+  <span class="asof">data k <b>{czDate(data.asOf)}</b></span>
+</header>
+
+<style>
+  .top { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; padding-bottom: 4px; }
+  .top a { text-decoration: none; }
+  .asof { font: 500 12px/1 var(--f-mono); color: var(--ink-3); }
+  .asof b { color: var(--ink-2); font-weight: 500; }
+</style>

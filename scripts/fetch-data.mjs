@@ -1,4 +1,4 @@
-// Pulls live data for the comparison table and writes public/data/etfs.json.
+// Pulls live data for the comparison table and writes src/data/etfs.json (imported by the pages at build time).
 //
 //   node scripts/fetch-data.mjs
 //
@@ -141,5 +141,5 @@ const out = {
   etfs: rows,
 };
 
-await writeFile(new URL("../public/data/etfs.json", import.meta.url), JSON.stringify(out, null, 2) + "\n");
-console.log(`\nwrote public/data/etfs.json (as of ${out.asOf})`);
+await writeFile(new URL("../src/data/etfs.json", import.meta.url), JSON.stringify(out, null, 2) + "\n");
+console.log(`\nwrote src/data/etfs.json (as of ${out.asOf})`);

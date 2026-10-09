@@ -2,7 +2,7 @@
 
 A lead-magnet landing page that compares **12 NYSE-listed ETFs** for **Czech retail investors arriving from a mobile ad**. In exchange for an email, visitors get a 2-page cheat sheet ("tahák") that maps every US ETF to the European twin they can actually buy.
 
-**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [fees (ad A)](https://etf-tahak-landing.vercel.app/?utm_content=fees-feed) · [twins (ad B)](https://etf-tahak-landing.vercel.app/?utm_content=twins-feed) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md)
+**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [`/` fees (ad A)](https://etf-tahak-landing.vercel.app/) · [`/dvojcata` twins (ad B)](https://etf-tahak-landing.vercel.app/dvojcata) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md) · **Code tour:** [§12](#12-tech-astro--vue)
 
 ![First screen of both variants](docs/img/first-screen-both-variants.png)
 
@@ -63,7 +63,7 @@ Plus a short follow-up sequence (4 emails: choosing a broker → standing order 
 
 ## 4. The two ads
 
-Both are designed for Meta (Instagram/Facebook), feed 4:5 and story 9:16 (story versions keep the top 14 % and bottom 20 % clear of UI). Sources: [`public/ads/*.html`](public/ads), rendered PNGs in [`public/ads/`](public/ads).
+Both are designed for Meta (Instagram/Facebook), feed 4:5 and story 9:16 (story versions keep the top 14 % and bottom 20 % clear of UI). Sources: [`marketing/ads/*.html`](marketing/ads), rendered PNGs in [`public/ads/`](public/ads).
 
 | Ad A: "fees" (loss aversion) | Ad B: "twins" (curiosity + frustration) |
 |---|---|
@@ -71,12 +71,12 @@ Both are designed for Meta (Instagram/Facebook), feed 4:5 and story 9:16 (story 
 | **Primary text:** Průměrný akciový fond v EU si každý rok strhne 1,9 % (ESMA). ETF na S&P 500 stojí od 0,03 %. Zní to jako drobnost, ale při 5 000 Kč měsíčně je to za 20 let skoro půl milionu korun. Spočítejte si svoje číslo, zabere to 10 vteřin. | **Primary text:** Chtěli jste koupit VOO, SPY nebo VT a broker vám to nedovolil? Nejste sami. Americká ETF drobný investor v EU nekoupí, chybí jim dokument KID. Každé z nich má ale evropské dvojče na stejný index. Sepsali jsme je na jeden tahák: 12 párů s ISINy a daně v kostce. Zdarma. |
 | **Headline:** Kolik vám sežerou poplatky? | **Headline:** VOO nekoupíte. Jeho dvojče ano. |
 | **Description:** Kalkulačka + tahák zdarma · **CTA:** Zjistit více | **Description:** 12 ETF a jejich dvojčata · **CTA:** Stáhnout |
-| `https://etf-tahak-landing.vercel.app/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=fees-feed` | `https://etf-tahak-landing.vercel.app/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=twins-feed` |
+| `https://etf-tahak-landing.vercel.app/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=fees-feed` | `https://etf-tahak-landing.vercel.app/dvojcata?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=twins-feed` |
 | **First screen:** H1 *"Kolik vám sežerou poplatky?"* (the ad's headline word for word) + the calculator, pre-filled with the ad's own example (5,000 CZK / 20 years / 1.9 %) so it shows **−466,000 Kč** before any tap. | **First screen:** *"VOO z Česka nekoupíte. Jeho dvojče ano."* + the same 3 pairs as in the ad (same order, same visual) + email form. |
 
 Primary text in English. Ad A: *"The average EU equity fund takes 1.9 % a year (ESMA). An S&P 500 ETF costs from 0.03 %. Sounds tiny, but at 5,000 CZK a month it's almost half a million crowns over 20 years. Work out your own number; it takes 10 seconds."* Ad B: *"Wanted to buy VOO, SPY or VT and your broker wouldn't let you? You're not alone. EU retail investors can't buy US ETFs because they lack a KID document. But each one has a European twin on the same index. We put them on one cheat sheet: 12 pairs with ISINs and taxes in a nutshell. Free."*
 
-The variant is chosen from `utm_content` (anything containing `twin` → B, otherwise A) by an inline script **before first paint**, so there's no flicker. One URL, one codebase; `?v=fees|twins` works too.
+Each ad has **its own URL**: `/` for A, `/dvojcata` for B. Both are pre-rendered static pages built from the same section components in a different order, so there's no flicker and no client-side switching. The `utm_content` still distinguishes feed vs. story creatives in the funnel.
 
 ## 5. Why the sections are in this order
 
@@ -103,7 +103,7 @@ The form appears **after value in every path**: after the result, after the pair
 
 ## 7. Real data and sources
 
-All data is fetched by [`scripts/fetch-data.mjs`](scripts/fetch-data.mjs) into [`public/data/etfs.json`](public/data/etfs.json) (data as of **8 Oct 2026**). The script **fails if any ETF is not listed on NYSE Arca.**
+All data is fetched by [`scripts/fetch-data.mjs`](scripts/fetch-data.mjs) into [`src/data/etfs.json`](src/data/etfs.json) (data as of **8 Oct 2026**). The script **fails if any ETF is not listed on NYSE Arca.**
 
 | Data | Source |
 |---|---|
@@ -115,15 +115,15 @@ All data is fetched by [`scripts/fetch-data.mjs`](scripts/fetch-data.mjs) into [
 
 Things the live data surfaced that a from-memory version would have got wrong: VWCE's fee fell to **0.14 %** in July 2026, SPLG is now **SPYM** (0.02 %), VTI now tracks a **Morningstar** index, SPYL (0.03 %) is cheaper than the SPY it replaces.
 
-Refresh: `npm run data && npm run render` (also runs weekly via [GitHub Action](.github/workflows/refresh-data.yml)). The page reads fees and the "as of" date from the JSON at runtime, so the HTML never goes stale.
+Refresh: `npm run data && npm run render` (also runs weekly via [GitHub Action](.github/workflows/refresh-data.yml)). Every number on the page, in the hero pairs and in the PDF is read from that JSON at build time, so a refresh updates everything consistently.
 
 ## 8. Tracking: the whole journey from arrival to submit
 
-[`public/track.js`](public/track.js) sends every event to three places:
+[`src/lib/tracking.ts`](src/lib/tracking.ts) sends every event to three places:
 
 1. **`window.dataLayer`**: GTM/GA4-ready, always on.
 2. **`/api/track`**: our own **cookieless** funnel (session id in memory only, so no consent needed and the funnel works from the first click). Stored in Upstash Redis as daily HyperLogLogs per segment `variant | utm_content | ask-arm`, i.e. **unique sessions per step, per ad creative**.
-3. **GA4 / Meta Pixel / PostHog**, only if their IDs are set in [`config.js`](public/config.js) *and* the visitor accepts the consent bar (which only appears once an ID is set). `lead_submitted` maps to GA4 `generate_lead` and Meta `Lead`, so Meta can optimise the campaign for leads.
+3. **GA4 / Meta Pixel / PostHog**, only if their IDs are set (env vars, see [`src/config.ts`](src/config.ts)) *and* the visitor accepts the consent bar (which only appears once an ID is set). `lead_submitted` maps to GA4 `generate_lead` and Meta `Lead`, so Meta can optimise the campaign for leads.
 
 | Stage | Events |
 |---|---|
@@ -165,58 +165,96 @@ Ad B should land a bit lower (7–10 %): it's less interactive, but the leads ha
 | # | Hypothesis | Change | Expected | Metric |
 |---|---|---|---|---|
 | **1** | **Offer framing.** A *personal* deliverable feels more valuable than a generic PDF. | Ad A: "Pošleme vám váš výpočet + 3 ETF pro vaši částku" ("We'll send you your calculation + 3 ETFs for your amount", personalised report) vs "Pošlete mi tahák" ("Send me the cheat sheet", generic). | **+20–30 %** relative visit→lead. The offer is usually the biggest lever on a lead-magnet page. | `lead_ok / lp_view`; secondary: email open rate |
-| **2** | **Ask timing.** For ad B, asking in the hero catches the decided; asking after proof (the table) persuades the undecided. Which group is bigger is genuinely unknown. | `ask=early` (form in hero) vs `ask=late` (hero button → table → form). **Already implemented:** set `experiments.ask.enabled = true` in `config.js`. | **±10–20 %**, direction unknown, which is exactly why to test it | `lead_ok / lp_view` + share of leads answering the profile question (quality proxy) |
+| **2** | **Ask timing.** For ad B, asking in the hero catches the decided; asking after proof (the table) persuades the undecided. Which group is bigger is genuinely unknown. | `ask=early` (form in hero) vs `ask=late` (hero button → table → form). **Already implemented:** set env `PUBLIC_EXP_ASK=on` and redeploy. | **±10–20 %**, direction unknown, which is exactly why to test it | `lead_ok / lp_view` + share of leads answering the profile question (quality proxy) |
 | **3** | **Anxiety microcopy.** Czech distrust of advisors is the main hesitation at the form. | "Žádné telefonáty, žádný poradce" vs a neutral line (or later, a real counter "Stáhlo už 3 214 lidí"; never fake). | **+5–10 %** relative `form_start → lead` | `lead_ok / form_start` |
 
 Sample size: at a 10 % base, detecting a 25 % relative lift (10 → 12.5 %) at 80 % power and α = 0.05 needs **~2,500 sessions per arm**. #1 and #2 are feasible within the first week at modest budgets; #3 needs ~4× more traffic, so run it later. Experiment arms are tracked on every event and every lead (`ask` in the segment key).
 
 ## 11. Could we start running ads tomorrow?
 
-**Yes, after about 1–2 hours of setup. Nothing needs building.** What's ready: the page, both variants, the ads (4 PNGs + copy + UTM links), the lead magnet, the lead API, tracking, the funnel dashboard, the A/B switch, and the privacy page draft.
+**Yes, after about 1–2 hours of setup. Nothing needs building, and no code needs editing: everything is an environment variable.** What's ready: the page, both variants, the ads (4 PNGs + copy + UTM links), the lead magnet, the lead API, tracking, the funnel dashboard, the A/B switch, and the privacy page draft.
 
 Launch checklist:
 1. **Persist leads (must do).** Vercel → Storage → *Upstash for Redis* (free) → connect to the project. Env vars are added automatically. *Without it, leads only reach the function logs, which Vercel's Hobby plan keeps for ~1 hour.*
 2. **Email delivery.** Either `RESEND_API_KEY` + `MAIL_FROM` (verified domain; free 3,000 emails/month) for the instant PDF email, **and/or** `LEAD_WEBHOOK_URL` to Ecomail / MailerLite / Make for the 4-email sequence (copy not written yet; outline in §3).
-3. **Ad measurement.** Put `metaPixelId` (and optionally `ga4Id`) into [`public/config.js`](public/config.js), verify the domain in Meta Business Manager, and set the campaign to optimise for the `Lead` event.
-4. **Legal.** Operator name + IČO in `config.js` (shown in the footer and privacy page); have the privacy text and the "4 follow-up emails" consent model reviewed (GDPR + Czech Act 480/2004 on commercial communications). If the operator is a regulated firm, a compliance check of investment marketing (past-performance warnings are already in place).
+3. **Ad measurement.** Set `PUBLIC_META_PIXEL_ID` (and optionally `PUBLIC_GA4_ID`) in Vercel's environment variables and redeploy. No code change. Verify the domain in Meta Business Manager, and set the campaign to optimise for the `Lead` event.
+4. **Legal.** Operator name + IČO in env `PUBLIC_OPERATOR` (shown in the footer and privacy page); have the privacy text and the "4 follow-up emails" consent model reviewed (GDPR + Czech Act 480/2004 on commercial communications). If the operator is a regulated firm, a compliance check of investment marketing (past-performance warnings are already in place).
 5. Set `STATS_KEY` for the dashboard. A `.cz` domain is optional but raises trust.
 6. Upload the creatives with the UTM links above, and check whether Meta requires advertiser verification for financial services in CZ at launch time.
 
-## 12. Tech
+## 12. Tech: Astro + Vue
 
-No framework, no runtime dependencies: plain HTML/CSS/JS for the page and Node serverless functions on Vercel.
+**Why this stack:** a landing page is ~80 % static text and ~20 % interactive. [Astro](https://astro.build) renders every page to plain HTML at build time (fast first screen, no JS for static parts) and loads [Vue](https://vuejs.org) only for the interactive "islands": calculator, table, form, sticky bar. API routes live in the same project and deploy as Vercel functions. (Nuxt was the alternative: one syntax everywhere, but the whole page hydrates; Astro keeps the JS to what's interactive.)
+
+### Where is what
 
 ```
-public/
-  index.html, styles.css, app.js   the page (both variants)
-  track.js, config.js              tracking layer + public settings (IDs, experiment switch)
-  data/etfs.json                   generated by scripts/fetch-data.mjs
-  tahak/etf-tahak-2026.pdf         the lead magnet (generated from tahak.html)
-  ads/                             ad creatives (HTML sources + rendered PNGs), OG image source
-  ochrana-udaju.html               privacy page (draft)
-api/
-  lead.js    POST lead → Redis + webhook + Resend; PATCH profile answer
-  track.js   cookieless event sink → Redis (HLL per step per segment)
-  stats.js   funnel dashboard
-scripts/
-  fetch-data.mjs   live data (Yahoo, stockanalysis, justETF)
-  render.mjs       PDF + ad PNGs + OG image via headless Chrome
-  dev.mjs          local server (static + api), no dependencies
+src/
+  pages/                         ← one file = one URL
+    index.astro                    "/"          ad A (fees): lists its sections in order
+    dvojcata.astro                 "/dvojcata"  ad B (twins): same sections, different order
+    ochrana-udaju.astro            privacy page
+    api/lead.ts                    POST lead → Redis + webhook + email; PATCH profile answer
+    api/track.ts                   cookieless funnel events → Redis
+    api/stats.ts                   funnel dashboard (?key=STATS_KEY)
+  components/
+    sections/*.astro             ← page sections, static HTML (HeroFees, HeroTwins, Comparison, Inside, Faq, FinalCta…)
+    Calculator.vue               ← interactive islands (Vue): template + logic + styles in one file
+    EtfTable.vue
+    LeadForm.vue + ThankYou.vue
+    StickyCta.vue, ConsentBar.vue
+    Header / Footer / Logo.astro
+  layouts/Layout.astro           ← <head>, fonts, global CSS, tracking init, consent bar
+  lib/                           ← plain TypeScript, no UI (unit-tested)
+    calc.ts                        the fee formula
+    email.ts                       validation + "seznam.cz?" typo suggestion
+    tracking.ts                    track() used by every component; GA4/Meta/PostHog after consent
+    format.ts, dom.ts
+    server/                        Redis, mail, HTTP helpers (API routes only)
+  stores/                        ← state shared between islands (nanostores): "signed up?", calculator values
+  data/etfs.json + etfs.ts       ← generated data + its TypeScript types
+  config.ts                      ← public settings, all from env vars
+  styles/global.css              ← design tokens + shared primitives (buttons, chips, the paper "slip")
+marketing/                       ← sources for things that aren't the page: ad creatives (HTML), PDF template
+scripts/                         ← fetch-data.mjs (live data), render.mjs (PDF + ad PNGs via headless Chrome)
+tests/unit/                      ← Vitest: calculator + email logic
+tests/e2e/                       ← Playwright: the full journey on a phone viewport, both ads
+public/                          ← served as-is: PDF, ad PNGs, favicon, OG image
 ```
 
-- **Mobile performance:** ~10 KB of our JS (gzipped), no images on the first screen (all CSS), fonts with `display=swap`.
-- **Run locally:** `npm run dev` → http://localhost:3000 (`/?utm_content=twins` for ad B).
-- **Deploy:** import the repo in Vercel (no build step; `vercel.json` serves `public/` and `api/`).
-- **Env vars:** see [`.env.example`](.env.example).
+**How to read a page:** open `src/pages/index.astro`. It's the section order, top to bottom. Each section is one file in `components/sections/`. Where a section needs interactivity it embeds a Vue component with a hydration directive: `client:load` (hero: interactive immediately) or `client:visible` (below the fold: loads when scrolled to).
 
-Tested end to end in headless Chrome at 390 px for both variants:
-- No horizontal scroll.
-- The calculator updates.
-- Filter, sort and expand work.
-- The typo suggestion fixes `sezanm.cz → seznam.cz`.
-- The lead is accepted, the success panel shows, the table unlocks and the remaining forms collapse.
-- The profile answer is saved.
-- All events arrive at `/api/track`.
+**How islands talk to each other:** each Vue island is a separate app, so shared state lives in [nanostores](https://github.com/nanostores/nanostores) (`src/stores/`), Astro's recommended pattern. When `LeadForm` saves a lead, `$leadId` changes, and `EtfTable` unlocks, the other forms switch to "Tahák už máte ✓", and `StickyCta` hides.
+
+**Env vars:** declared and typed in one place, `astro.config.mjs → env.schema` (Astro's `astro:env`). `PUBLIC_*` are inlined into the browser bundle; secrets are read at runtime by the API routes only. See [`.env.example`](.env.example).
+
+### Commands
+
+| | |
+|---|---|
+| `npm run dev` | local dev server → http://localhost:4321 (`/dvojcata` for ad B) |
+| `npm run check` | TypeScript + Astro type check |
+| `npm test` | unit tests (Vitest) |
+| `npm run test:e2e` | end-to-end journey (Playwright, uses installed Chrome, starts the dev server itself) |
+| `npm run build` | production build (`.vercel/output`) |
+| `npm run data` / `npm run render` | refresh data / re-render PDF + ads |
+
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tests, build and the e2e journey on every push. **Deploy:** `vercel deploy --prod`, or connect the repo in Vercel for deploy-on-push (Astro is auto-detected).
+
+**Performance:** the first screen is pre-rendered HTML, with no images (all CSS) and fonts with `display=swap`. JavaScript is ~43 KB gzipped in total, of which ~30 KB is the Vue runtime and ~10 KB our components. Below-the-fold islands load only when scrolled to.
+
+**Tests:** the e2e suite checks both ads at phone size:
+- no horizontal scroll
+- the ad's number (−466 000 Kč) is visible before any tap
+- the calculator updates
+- 6 of 12 rows show, 3 twins are open, "show more" works
+- the typo fix (`sezanm.cz → seznam.cz`)
+- sign-up: the success panel shows, the table unlocks, the other forms collapse
+- the profile answer
+- the expected tracking events
+- returning visitors aren't asked again
+- the lead API rejects bad input
+- no JS errors and no Vue hydration mismatches
 
 ## Honest limitations
 

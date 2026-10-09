@@ -1,0 +1,51 @@
+---
+// The four reasons people hesitate at the form, answered right before the final ask.
+// Native <details>, so it works without JavaScript; opening one is tracked by the script below.
+const items = [
+  {
+    q: "Proč nemůžu koupit VOO přímo?",
+    a: "Od roku 2018 platí v EU nařízení PRIIPs. Fond nabízený drobným investorům musí mít dokument KID s klíčovými informacemi. Americké fondy ho nevydávají, a tak je evropští brokeři pro běžné klienty blokují. Výjimkou jsou „profesionální klienti“, tím ale běžný investor není.",
+  },
+  {
+    q: "Není evropské dvojče horší než originál?",
+    a: "Pro investora z Česka spíš naopak. Akumulační verze dividendy rovnou reinvestuje, takže je nemusíte danit ani vykazovat. U amerických fondů navíc hrozí americká dědická daň u majetku nad 60 000 USD. Irské fondy se jí netýkají.",
+  },
+  {
+    q: "Co za tahák chcete?",
+    a: "Jen e-mail. PDF dostanete hned a pak 4 krátké e-maily: jak vybrat brokera, jak nastavit pravidelnou investici, daně a DIP. Žádné telefonáty, žádný poradce. Odhlásíte se jedním klikem.",
+  },
+  {
+    q: "Je to investiční doporučení?",
+    a: "Ne. Je to srovnání veřejných dat, zdroje najdete dole. Investice nesou riziko, hodnota může klesat a minulé výnosy nezaručují budoucí. Co a kdy koupíte, je na vás.",
+  },
+];
+---
+
+<section class="sec" id="otazky" data-sec="faq">
+  <h2 class="h2">Na co se lidé ptají</h2>
+  {items.map((item, i) => (
+    <details data-faq={i + 1}>
+      <summary>{item.q}</summary>
+      <p>{item.a}</p>
+    </details>
+  ))}
+</section>
+
+<script>
+  import { track } from "@/lib/tracking";
+  document.querySelectorAll<HTMLDetailsElement>("details[data-faq]").forEach((d) => {
+    d.addEventListener("toggle", () => {
+      if (d.open) track("faq_open", { q: Number(d.dataset.faq) }, { once: `faq${d.dataset.faq}` });
+    });
+  });
+</script>
+
+<style>
+  details { border-bottom: 1.5px solid var(--ink); }
+  details:first-of-type { border-top: 1.5px solid var(--ink); }
+  summary { cursor: pointer; list-style: none; padding: 15px 30px 15px 0; font-weight: 750; font-size: 17px; position: relative; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; position: absolute; right: 4px; top: 11px; font: 700 22px/1 var(--f-mono); }
+  details[open] summary::after { content: "−"; }
+  p { margin: 0 0 16px; color: var(--ink-2); font-size: 16px; }
+</style>

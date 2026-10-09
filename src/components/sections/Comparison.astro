@@ -1,0 +1,22 @@
+---
+// The ETF comparison. The table itself is a Vue island; it's rendered to HTML at build time too,
+// so the data is in the page before any JavaScript runs.
+import EtfTable from "@/components/EtfTable.vue";
+import { data, etfs, FREE_TWINS } from "@/data/etfs";
+import { czDate } from "@/lib/format";
+---
+
+<section class="sec" id="srovnani" data-sec="table">
+  <h2 class="h2">{etfs.length} populárních ETF z NYSE a čím je nahradit</h2>
+  <p class="lede">Všechny se obchodují na NYSE Arca. Žádné z nich si u evropského brokera jako drobný investor nekoupíte. Dvojčata ano.</p>
+
+  <EtfTable client:visible etfs={etfs} freeTwins={FREE_TWINS} />
+
+  <p class="fine">
+    Výnos = průměrný roční výnos v USD vč. reinvestovaných dividend k {czDate(data.asOf)}. Minulé výnosy nezaručují budoucí. Zdroje dole.
+  </p>
+</section>
+
+<style>
+  .fine { font-size: 12.5px; color: var(--ink-3); margin: 12px 0 0; }
+</style>

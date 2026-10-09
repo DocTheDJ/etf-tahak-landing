@@ -1,0 +1,26 @@
+---
+// First screen for ad A ("Kolik vám sežerou poplatky?"): the ad's headline word for word,
+// the calculator already showing the ad's example, and the email form right under the result.
+import Calculator from "@/components/Calculator.vue";
+import LeadForm from "@/components/LeadForm.vue";
+import { CALC_ETF } from "@/data/etfs";
+import { pct } from "@/lib/format";
+import { ESMA_FUND_COST } from "@/lib/calc";
+---
+
+<section class="sec sec--first" data-sec="calculator">
+  <p class="eyebrow">Kalkulačka · 10 vteřin</p>
+  <h1 class="h1">Kolik vám <mark>sežerou poplatky?</mark></h1>
+  <p class="lede">
+    Průměrný fond v EU stojí <b>{pct(ESMA_FUND_COST, 1)} ročně</b>, ETF na S&amp;P 500 od <b>0,03 %</b>. Rozdíl vypadá malý. Není.
+  </p>
+
+  <Calculator client:load etfTicker={CALC_ETF.ticker} etfFee={CALC_ETF.ter} />
+
+  <LeadForm
+    client:load
+    loc="calculator"
+    label="Tahák vám ukáže 12 ETF, se kterými si ten rozdíl necháte. Kam ho poslat?"
+    button="Pošlete mi tahák"
+  />
+</section>

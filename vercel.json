@@ -1,7 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "public",
-  "cleanUrls": true,
   "headers": [
     {
       "source": "/(.*)",
@@ -10,17 +8,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     },
-    {
-      "source": "/tahak/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
-    },
-    {
-      "source": "/ads/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
-    },
-    {
-      "source": "/data/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, s-maxage=3600" }]
-    }
+    { "source": "/tahak/(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }] },
+    { "source": "/ads/(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }] }
   ]
 }

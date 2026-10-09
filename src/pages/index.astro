@@ -1,0 +1,24 @@
+---
+// Landing page for ad A ("fees"). Ad link: /?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=fees-feed
+// Section order (README §5): the visitor's own number first → what they get → proof → objections → final ask.
+import Layout from "@/layouts/Layout.astro";
+import HeroFees from "@/components/sections/HeroFees.astro";
+import Inside from "@/components/sections/Inside.astro";
+import Comparison from "@/components/sections/Comparison.astro";
+import Faq from "@/components/sections/Faq.astro";
+import FinalCta from "@/components/sections/FinalCta.astro";
+import StickyCta from "@/components/StickyCta.vue";
+---
+
+<Layout
+  variant="fees"
+  title="Kolik vám sežerou poplatky? · ETF tahák"
+  description="Spočítejte si za 10 vteřin, kolik vás stojí poplatky fondu, a stáhněte si tahák: 12 ETF z NYSE a jejich evropská dvojčata, která z Česka koupíte."
+>
+  <HeroFees />
+  <Inside />
+  <Comparison />
+  <Faq />
+  <FinalCta />
+  <StickyCta client:idle /> {/* fixed bottom bar; position in the markup doesn't matter */}
+</Layout>

@@ -1,0 +1,27 @@
+---
+// Landing page for ad B ("twins"). Ad link: /dvojcata?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_tahak&utm_content=twins-feed
+// Section order (README §5): the promised pairs first → the full table (deliver what the ad promised) →
+// why it matters in money → what they get → objections → final ask.
+import Layout from "@/layouts/Layout.astro";
+import HeroTwins from "@/components/sections/HeroTwins.astro";
+import Comparison from "@/components/sections/Comparison.astro";
+import CalculatorSection from "@/components/sections/CalculatorSection.astro";
+import Inside from "@/components/sections/Inside.astro";
+import Faq from "@/components/sections/Faq.astro";
+import FinalCta from "@/components/sections/FinalCta.astro";
+import StickyCta from "@/components/StickyCta.vue";
+---
+
+<Layout
+  variant="twins"
+  title="VOO z Česka nekoupíte. Jeho dvojče ano. · ETF tahák"
+  description="Americká ETF z NYSE drobný investor v EU nekoupí. Tahák zdarma: 12 ETF a jejich evropská dvojčata s ISINy, poplatky a daně v kostce."
+>
+  <HeroTwins />
+  <Comparison />
+  <CalculatorSection />
+  <Inside />
+  <Faq />
+  <FinalCta />
+  <StickyCta client:idle /> {/* fixed bottom bar; position in the markup doesn't matter */}
+</Layout>
