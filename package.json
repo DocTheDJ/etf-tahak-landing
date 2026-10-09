@@ -14,10 +14,11 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "data": "node scripts/fetch-data.mjs",
-    "render": "node scripts/render.mjs"
+    "render": "node scripts/render.mjs",
+    "check:function": "node scripts/check-function.mjs"
   },
   "dependencies": {
-    "@astrojs/vercel": "^11.0.13",
+    "@astrojs/vercel": "11.0.12",
     "@astrojs/vue": "^7.0.3",
     "@nanostores/vue": "^1.1.0",
     "astro": "^7.3.8",

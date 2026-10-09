@@ -236,10 +236,12 @@ public/                          ← served as-is: PDF, ad PNGs, favicon, OG ima
 | `npm run check` | TypeScript + Astro type check |
 | `npm test` | unit tests (Vitest) |
 | `npm run test:e2e` | end-to-end journey (Playwright, uses installed Chrome, starts the dev server itself) |
-| `npm run build` | production build (`.vercel/output`) |
+| `npm run build` | production build (`.vercel/output`), then `npm run check:function` |
 | `npm run data` / `npm run render` | refresh data / re-render PDF + ads |
 
-CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tests, build and the e2e journey on every push. **Deploy:** `vercel deploy --prod`, or connect the repo in Vercel for deploy-on-push (Astro is auto-detected).
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tests, build and the e2e journey on every push.
+
+**Pinned on purpose:** `@astrojs/vercel` is pinned to `11.0.12`. Version 11.0.13 (released 8 Oct 2026) bundles `import "rolldown"` into the server function, which crashes every API route on Vercel (`FUNCTION_INVOCATION_FAILED`, "Cannot find native binding"). `npm run check:function` (also in CI) fails the build if build tooling ever leaks into the function again. Check before upgrading. **Deploy:** `vercel deploy --prod`, or connect the repo in Vercel for deploy-on-push (Astro is auto-detected).
 
 **Performance:** the first screen is pre-rendered HTML, with no images (all CSS) and fonts with `display=swap`. JavaScript is ~43 KB gzipped in total, of which ~30 KB is the Vue runtime and ~10 KB our components. Below-the-fold islands load only when scrolled to.
 
