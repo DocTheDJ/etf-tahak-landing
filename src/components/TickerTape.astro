@@ -15,21 +15,12 @@ const items =
     : etfs.map((e, i) => `${e.ticker} ✕ ${i % 2 ? "CHYBÍ KID" : "BLOKOVÁNO"}`);
 ---
 
-<div class:list={["tape", `tape--${mode}`]} aria-hidden="true">
-  <div class="track" style={`--dur: ${items.length * 3.2}s`}>
-    {[0, 1].map(() => items.map((t) => (<><span>{t}</span><span class="sep">●</span></>)))}
+<div
+  class:list={["sticky top-0 z-15 flex h-[34px] items-center overflow-hidden text-ink", mode === "pairs" ? "bg-lime" : "bg-coral"]}
+  aria-hidden="true"
+  data-testid="ticker"
+>
+  <div class="tape-scroll flex gap-[22px] pl-4 font-mono text-[13px] leading-none font-bold whitespace-nowrap" style={`--dur: ${items.length * 3.2}s`}>
+    {[0, 1].map(() => items.map((t) => (<><span>{t}</span><span class="opacity-55">●</span></>)))}
   </div>
 </div>
-
-<style>
-  .tape { height: 34px; overflow: hidden; display: flex; align-items: center; position: sticky; top: 0; z-index: 15; }
-  .tape--pairs { background: var(--lime); color: var(--lime-ink); }
-  .tape--blocked { background: var(--coral); color: var(--lime-ink); }
-  .track {
-    display: flex; gap: 22px; white-space: nowrap; padding-left: 16px;
-    font: 700 13px/1 var(--f-mono);
-    animation: tape var(--dur) linear infinite;
-  }
-  .sep { opacity: 0.55; }
-  @keyframes tape { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-</style>

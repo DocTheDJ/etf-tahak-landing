@@ -4,13 +4,9 @@ import { data } from "@/data/etfs";
 import { czDate } from "@/lib/format";
 ---
 
-<header class="wrap top">
-  <a href="/" aria-label="ETF tahák"><Logo /></a>
-  <span class="asof"><span class="live-dot"></span>živá data · {czDate(data.asOf)}</span>
+<header class="mx-auto flex max-w-col items-center justify-between px-4 pt-4 pb-1">
+  <a href="/" aria-label="ETF tahák" class="no-underline"><Logo /></a>
+  <span class="inline-flex items-center gap-2 font-mono text-[11px] leading-none font-medium text-muted uppercase">
+    <span class="live-dot"></span>živá data · {czDate(data.asOf)}
+  </span>
 </header>
-
-<style>
-  .top { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; padding-bottom: 4px; }
-  .top a { text-decoration: none; }
-  .asof { display: inline-flex; align-items: center; gap: 8px; font: 500 11px/1 var(--f-mono); color: var(--muted); text-transform: uppercase; }
-</style>

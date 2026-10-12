@@ -15,15 +15,17 @@
     "test:e2e": "playwright test",
     "data": "node scripts/fetch-data.mjs",
     "render": "node scripts/render.mjs",
-    "check:function": "node scripts/check-function.mjs"
+    "check:function": "node scripts/check-function.mjs",
+    "test:visual": "playwright test -c playwright.visual.config.ts"
   },
   "dependencies": {
     "@astrojs/vercel": "11.0.12",
     "@astrojs/vue": "^7.0.3",
-    "@nanostores/vue": "^1.1.0",
+    "@tailwindcss/vite": "4.3.3",
     "astro": "^7.3.8",
-    "nanostores": "^1.5.5",
+    "pinia": "4.0.3",
     "posthog-js": "1.438.5",
+    "tailwindcss": "4.3.3",
     "vue": "^3.5.43"
   },
   "devDependencies": {

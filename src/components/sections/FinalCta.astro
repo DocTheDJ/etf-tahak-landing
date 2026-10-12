@@ -1,19 +1,16 @@
 ---
 // The last ask, for visitors who read to the end. The sticky bar and the locked twins scroll here.
 import LeadForm from "@/components/LeadForm.vue";
+import Section from "@/components/ui/Section.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Heading from "@/components/ui/Heading.astro";
 ---
 
-<section class="sec final" id="tahak" data-sec="final">
-  <p class="eyebrow">Tahák · PDF · 2 strany</p>
-  <h2 class="h2">Přečtete ho za jednu cestu <span class="t-lime">tramvají.</span></h2>
-  <div class="box">
+<Section id="tahak" track="final" last>
+  <Eyebrow>Tahák · PDF · 2 strany</Eyebrow>
+  <Heading>Přečtete ho za jednu cestu <span class="text-lime">tramvají.</span></Heading>
+  <!-- after sign-up the form becomes the thank-you panel, which has its own frame -->
+  <div class="rounded-card border border-line bg-surface p-4 has-[[data-testid=thank-you]]:border-0 has-[[data-testid=thank-you]]:bg-transparent has-[[data-testid=thank-you]]:p-0">
     <LeadForm client:visible loc="final" label="Kam vám ho poslat?" />
   </div>
-</section>
-
-<style>
-.final { padding-bottom: 36px; }
-  .box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; }
-  /* after sign-up the form becomes the thank-you panel, which has its own frame */
-  .box:has(.done) { background: none; border: 0; padding: 0; }
-</style>
+</Section>

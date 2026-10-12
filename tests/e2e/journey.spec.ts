@@ -30,42 +30,44 @@ test("ad A (fees): calculator first, typo fix, sign-up unlocks the table", async
 
   await page.goto(`/?${AD_PARAMS}&utm_content=fees-feed`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Kolik vám sežerou poplatky?");
-  await expect(page.locator(".big")).toHaveText(/−466\s000\sKč/); // the ad's number, before any tap
+  await expect(page.getByTestId("loss")).toHaveText(/−466\s000\sKč/); // the ad's number, before any tap
   await noHorizontalScroll(page);
 
   await hydrated(page, "Calculator");
   await page.getByRole("button", { name: "10 000", exact: true }).click();
-  await expect(page.locator(".big")).toHaveText(/−932\s000\sKč/);
+  await expect(page.getByTestId("loss")).toHaveText(/−932\s000\sKč/);
 
   // the table shows 6 of 12; 3 twins open (the ones from the ad), the rest locked
   await page.locator("#srovnani").scrollIntoViewIfNeeded();
   await hydrated(page, "EtfTable");
-  await expect(page.locator(".etfs > li")).toHaveCount(6);
-  await expect(page.locator(".twin--locked")).toHaveCount(3);
-  await expect(page.locator(".unlock.sheen")).toHaveCount(3); // light sweep on every 🔒 button
+  await expect(page.getByTestId("etf-row")).toHaveCount(6);
+  await expect(page.locator("[data-locked]")).toHaveCount(3);
+  const unlocks = page.getByRole("button", { name: "Odemknout" });
+  await expect(unlocks).toHaveCount(3);
+  for (const b of await unlocks.all()) await expect(b).toHaveClass(/sheen/); // light sweep on every 🔒 button
   await page.getByRole("button", { name: /Ukázat dalších 6 ETF/ }).click();
-  await expect(page.locator(".etfs > li")).toHaveCount(12);
+  await expect(page.getByTestId("etf-row")).toHaveCount(12);
 
   // typo suggestion, accept it, submit
   await hydrated(page, "LeadForm");
   const form = page.locator('form[data-loc="calculator"]');
   // empty: a light runs around the field; the button is calm
-  await expect(form.locator(".field")).toHaveClass(/field--run/);
+  await expect(form.locator("[data-state]")).toHaveAttribute("data-state", "run");
   await expect(form.getByRole("button", { name: "Chci tahák →" })).not.toHaveClass(/sheen/);
   await form.getByRole("textbox").fill("jana.novakova@sezanm.cz");
   // valid address: solid lime field with a check, the sweep moves to the button
-  await expect(form.locator(".field")).toHaveClass(/field--ok/);
-  await expect(form.locator(".check")).toBeVisible();
+  await expect(form.locator("[data-state]")).toHaveAttribute("data-state", "ok");
+  await expect(form.getByTestId("email-check")).toBeVisible();
   await expect(form.getByRole("button", { name: "Chci tahák →" })).toHaveClass(/sheen/);
   await form.getByRole("button", { name: "Chci tahák →" }).click();
-  await expect(form.locator(".field")).toHaveClass(/field--err/); // the typo hint turns the field coral
+  await expect(form.locator("[data-state]")).toHaveAttribute("data-state", "err"); // the typo hint turns the field coral
   await form.getByRole("button", { name: "jana.novakova@seznam.cz" }).click();
   await expect(form.getByRole("textbox")).toHaveValue("jana.novakova@seznam.cz");
   await form.getByRole("button", { name: "Chci tahák →" }).click();
 
   await expect(page.getByText("Tahák je váš.")).toBeVisible();
   await expect(page.getByRole("link", { name: /Stáhnout tahák \(PDF/ })).toHaveAttribute("href", "/tahak/etf-tahak-2026.pdf");
-  await expect(page.locator(".twin--locked")).toHaveCount(0);
+  await expect(page.locator("[data-locked]")).toHaveCount(0);
   await page.locator("#tahak").scrollIntoViewIfNeeded(); // the final form hydrates when visible
   await expect(page.locator("form[data-loc]")).toHaveCount(0); // ...and becomes "Tahák už máte" too
 
@@ -93,7 +95,7 @@ test("ad B (twins): the ad's pairs first, sign-up in the hero", async ({ page })
 
   await page.goto(`/dvojcata?${AD_PARAMS}&utm_content=twins-feed`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("VOO z Česka nekoupíte. Jeho dvojče ano.");
-  for (const twin of ["VUAA", "SPYL", "VWCE"]) await expect(page.locator(".book")).toContainText(twin);
+  for (const twin of ["VUAA", "SPYL", "VWCE"]) await expect(page.getByTestId("pairs")).toContainText(twin);
   await noHorizontalScroll(page);
 
   await hydrated(page, "LeadForm");

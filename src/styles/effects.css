@@ -1,0 +1,93 @@
+/* The "alive" effects: things plain utilities can't express (pseudo-elements, multi-step keyframes).
+   Each one is a named utility, so markup just says class="comet-border", "sheen", "live-dot"…
+   Simple one-shot animations are exposed as animate-* utilities via @theme. */
+
+@theme {
+  --animate-rise: rise 0.35s ease-out both;
+  --animate-grow: grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-slide-in: slide-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-glow: glow 1.6s ease-out infinite;
+  --animate-nudge: nudge 2.6s ease-in-out infinite;
+  --animate-unlock: unlock 1.2s ease;
+
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes pop { 0% { transform: scale(0.4); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes slide-in { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+  @keyframes float { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(-3deg) translateY(-5px); } }
+  @keyframes glow { 0% { box-shadow: 0 0 0 0 rgba(212, 255, 58, 0.6); } 70% { box-shadow: 0 0 0 7px rgba(212, 255, 58, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 255, 58, 0); } }
+  @keyframes nudge { 0%, 62%, 100% { transform: translateX(0); } 78% { transform: translateX(5px); } }
+  @keyframes unlock { from { background: rgba(212, 255, 58, 0.35); } to { background: var(--color-surface-2); } }
+}
+
+/* Pulsing "live data" dot */
+@utility live-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex: none;
+  background: var(--color-lime);
+  animation: pulse-lime 1.6s ease-out infinite;
+}
+@keyframes pulse-lime {
+  0% { box-shadow: 0 0 0 0 rgba(212, 255, 58, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(212, 255, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 255, 58, 0); }
+}
+
+/* Blinking cursor after the loss number */
+@utility caret {
+  color: var(--color-lime);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Ticker tape track: content is rendered twice, sliding by half = seamless loop. Duration via --dur. */
+@utility tape-scroll {
+  animation: tape var(--dur, 40s) linear infinite;
+}
+@keyframes tape { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Running border around the email field while the address isn't valid yet.
+   The element's 2px padding shows its background as the "border"; a large conic comet rotates behind it. */
+@utility comet-border {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: var(--color-line); /* the resting border colour; the comet runs on top of it */
+  &::before {
+    content: ""; position: absolute; left: 50%; top: 50%; z-index: -1;
+    width: 200%; aspect-ratio: 1; transform: translate(-50%, -50%);
+    background: conic-gradient(from 0deg, transparent 0 60%, rgba(212, 255, 58, 0.12) 70%, var(--color-lime) 84%, #fff 87%, transparent 90%);
+    animation: comet 2.8s linear infinite;
+  }
+  /* reduce motion: no running light, just a lime border so the field still reads as "type here" */
+  @media (prefers-reduced-motion: reduce) {
+    background: var(--color-lime);
+    &::before { display: none; }
+  }
+}
+@keyframes comet { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+/* Light sweep across a button every few seconds (submit when the email is valid, every 🔒 Odemknout).
+   Stagger several with --sheen-delay; pause one with .is-paused (e.g. when scrolled out of view). */
+@utility sheen {
+  position: relative; overflow: hidden; isolation: isolate;
+  &::after {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 34%; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    transform: translateX(-150%) skewX(-20deg);
+    animation: sweep 2.6s ease-in-out infinite; animation-delay: var(--sheen-delay, 0s);
+  }
+  &.is-paused::after { animation-play-state: paused; }
+}
+@keyframes sweep {
+  0%, 55% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(380%) skewX(-20deg); }
+}
+
+/* Fit a one-line monospace number to its container (the calculator's loss): never wraps, shrinks when long.
+   Monospace = every character is 0.6 em wide, so size = container width ÷ (characters × 0.6), capped at 52px.
+   The element sets --chars; an ancestor needs `@container` (container-type: inline-size). */
+@utility fit-to-width {
+  white-space: nowrap;
+  font-size: clamp(26px, 8.4vw, 52px); /* fallback for browsers without container units (pre-2022) */
+  font-size: min(52px, calc(100cqi / (var(--chars) * 0.6)));
+}

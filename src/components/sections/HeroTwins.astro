@@ -2,6 +2,11 @@
 // First screen for ad B ("Broker vám nedovolil koupit VOO?"): the same three pairs as in the ad,
 // shown like an order book (blocked on the left, buyable on the right), a teaser row, and the email form.
 import LeadForm from "@/components/LeadForm.vue";
+import Btn from "@/components/ui/Btn.vue";
+import Section from "@/components/ui/Section.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Heading from "@/components/ui/Heading.astro";
+import Lede from "@/components/ui/Lede.astro";
 import { byTicker, etfs, FREE_TWINS } from "@/data/etfs";
 import { pct } from "@/lib/format";
 
@@ -10,56 +15,45 @@ const teaser = byTicker("SCHD");
 const remaining = etfs.length - pairs.length - 1;
 const note = (e: ReturnType<typeof byTicker>) =>
   e.twin.ter < e.er ? null : e.twin.match === "same" ? "stejný index" : e.focus.toLowerCase();
+
+const row = "grid animate-slide-in grid-cols-2 items-center border-b border-line px-3.5 py-3 last:border-b-0";
+const side = "flex flex-col gap-0.5 font-mono";
+const small = "text-[11px] text-muted";
 ---
 
-<section class="sec sec--first" data-sec="hero_twins">
-  <p class="eyebrow eyebrow--warn">Broker řekl „ne“?</p>
-  <h1 class="h1">VOO z Česka nekoupíte. <span class="t-lime">Jeho dvojče ano.</span></h1>
-  <p class="lede">Americkým ETF chybí evropský dokument KID, a tak je broker drobnému investorovi v EU neprodá. Každé má ale irské dvojče na stejný index.</p>
+<Section track="hero_twins" first>
+  <Eyebrow tone="coral">Broker řekl „ne“?</Eyebrow>
+  <Heading level={1}>VOO z Česka nekoupíte. <span class="text-lime">Jeho dvojče ano.</span></Heading>
+  <Lede>Americkým ETF chybí evropský dokument KID, a tak je broker drobnému investorovi v EU neprodá. Každé má ale irské dvojče na stejný index.</Lede>
 
-  <div class="book" aria-label="Ukázka z taháku">
-    <div class="head"><span>USA · NYSE</span><span>EU · XETRA</span></div>
+  <div class="mt-1 mb-5 overflow-hidden rounded-card border border-line bg-surface" aria-label="Ukázka z taháku" data-testid="pairs">
+    <div class="grid grid-cols-2 border-b border-line px-3.5 py-2.5 font-mono text-[11px] leading-none font-medium text-muted">
+      <span>USA · NYSE</span><span class="text-right">EU · XETRA</span>
+    </div>
     {pairs.map((e, i) => (
-      <div class="row" style={`animation-delay: ${i * 0.12}s`}>
-        <span class="us"><b>{e.ticker}</b><small>{pct(e.er)} · nekoupíte</small></span>
-        <span class="eu">
-          <b>{e.twin.ticker} ✓</b>
+      <div class={row} style={`animation-delay: ${i * 0.12}s`}>
+        <span class={side}><b class="text-[18px] text-coral line-through">{e.ticker}</b><small class={small}>{pct(e.er)} · nekoupíte</small></span>
+        <span class:list={[side, "items-end text-right"]}>
+          <b class="text-[18px] text-lime">{e.twin.ticker} ✓</b>
           {note(e)
-            ? <small>{pct(e.twin.ter)} · {note(e)}</small>
-            : <small class="flash">{pct(e.twin.ter)} · levnější</small>}
+            ? <small class={small}>{pct(e.twin.ter)} · {note(e)}</small>
+            : <small class="animate-glow rounded-[5px] bg-lime px-[7px] py-0.5 text-[11px] font-bold text-ink">{pct(e.twin.ter)} · levnější</small>}
         </span>
       </div>
     ))}
-    <div class="row" style={`animation-delay: ${pairs.length * 0.12}s`} aria-hidden="true">
-      <span class="us"><b>{teaser.ticker}</b><small>{pct(teaser.er)} · nekoupíte</small></span>
-      <span class="eu"><span class="more">+ {remaining} dalších v taháku</span></span>
+    <div class={row} style={`animation-delay: ${pairs.length * 0.12}s`} aria-hidden="true">
+      <span class={side}><b class="text-[18px] text-coral line-through">{teaser.ticker}</b><small class={small}>{pct(teaser.er)} · nekoupíte</small></span>
+      <span class:list={[side, "items-end text-right"]}>
+        <span class="rounded-full bg-fg px-2.5 py-[7px] font-sans text-[12px] leading-none font-bold text-ink">+ {remaining} dalších v taháku</span>
+      </span>
     </div>
   </div>
 
   <!-- A/B test "ask" (Layout sets data-ask before paint): early = form here, late = button to the proof -->
-  <div class="ask-early">
+  <div class="ask-late:hidden">
     <LeadForm client:load loc="hero_twins" label={`Pošleme vám všech ${etfs.length} párů s ISINy`} button="Chci je →" />
   </div>
-  <div class="ask-late">
-    <a class="btn btn--primary btn--block" href="#srovnani" data-cta="hero_twins_late">Ukázat všech {etfs.length} párů ↓</a>
+  <div class="ask-early:hidden">
+    <Btn href="#srovnani" variant="primary" block data-cta="hero_twins_late">Ukázat všech {etfs.length} párů ↓</Btn>
   </div>
-</section>
-
-<style>
-  .book { margin: 4px 0 20px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
-  .head, .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 12px 14px; }
-  .head { padding: 10px 14px; font: 500 11px/1 var(--f-mono); color: var(--muted); border-bottom: 1px solid var(--line); }
-  .head span:last-child, .eu { text-align: right; align-items: flex-end; }
-  .row { align-items: center; border-bottom: 1px solid var(--line); animation: slide 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-  .row:last-child { border-bottom: 0; }
-  .us, .eu { display: flex; flex-direction: column; font-family: var(--f-mono); gap: 2px; }
-  .us b { font-size: 18px; color: var(--coral); text-decoration: line-through; }
-  .eu b { font-size: 18px; color: var(--lime); }
-  small { font-size: 11px; color: var(--muted); }
-  .flash { font-weight: 700; padding: 2px 7px; border-radius: 5px; background: var(--lime); color: var(--lime-ink); animation: glow 1.6s ease-out infinite; }
-  .more { font: 700 12px/1 var(--f-sans); color: var(--lime-ink); background: var(--text); padding: 7px 10px; border-radius: 999px; }
-  @keyframes slide { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
-  /* the text stays readable the whole time; only the glow around the pill pulses */
-  @keyframes glow { 0% { box-shadow: 0 0 0 0 rgba(212, 255, 58, 0.6); } 70% { box-shadow: 0 0 0 7px rgba(212, 255, 58, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 255, 58, 0); } }
-  :global([data-ask="early"]) .ask-late, :global([data-ask="late"]) .ask-early { display: none; }
-</style>
+</Section>

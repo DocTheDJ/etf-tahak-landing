@@ -2,7 +2,7 @@
 
 A lead-magnet landing page that compares **12 NYSE-listed ETFs** for **Czech retail investors arriving from a mobile ad**. In exchange for an email, visitors get a 2-page cheat sheet ("tahák") that maps every US ETF to the European twin they can actually buy.
 
-**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [`/` fees (ad A)](https://etf-tahak-landing.vercel.app/) · [`/dvojcata` twins (ad B)](https://etf-tahak-landing.vercel.app/dvojcata) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md) · **Code tour:** [§12](#12-tech-astro--vue)
+**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [`/` fees (ad A)](https://etf-tahak-landing.vercel.app/) · [`/dvojcata` twins (ad B)](https://etf-tahak-landing.vercel.app/dvojcata) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md) · **Code tour:** [§12](#12-tech-astro--vue--tailwind--pinia) · The site itself is meant to be used from a phone, so on a computer it looks rather odd but it still works, and a desktop version would be added, however the case scenario described navigation from mobile advertisement
 
 ![First screen of both variants](docs/img/first-screen-both-variants.png)
 
@@ -227,7 +227,7 @@ Launch checklist:
 5. Set `STATS_KEY` for the dashboard. A `.cz` domain is optional but raises trust.
 6. Upload the creatives with the UTM links above, and check whether Meta requires advertiser verification for financial services in CZ at launch time.
 
-## 12. Tech: Astro + Vue
+## 12. Tech: Astro + Vue + Tailwind + Pinia
 
 **Why this stack:** a landing page is ~80 % static text and ~20 % interactive. [Astro](https://astro.build) renders every page to plain HTML at build time (fast first screen, no JS for static parts) and loads [Vue](https://vuejs.org) only for the interactive "islands": calculator, table, form, sticky bar. API routes live in the same project and deploy as Vercel functions. (Nuxt was the alternative: one syntax everywhere, but the whole page hydrates; Astro keeps the JS to what's interactive.)
 
@@ -244,7 +244,8 @@ src/
     api/stats.ts                   funnel dashboard (?key=STATS_KEY)
   components/
     sections/*.astro             ← page sections, static HTML (HeroFees, HeroTwins, Comparison, Inside, Faq, FinalCta…)
-    Calculator.vue               ← interactive islands (Vue): template + logic + styles in one file
+    ui/                          ← building blocks: Btn, Chip (Vue) · Section, Heading, Eyebrow, Lede (Astro)
+    Calculator.vue               ← interactive islands (Vue): template + logic, styled with Tailwind classes
     EtfTable.vue
     LeadForm.vue + ThankYou.vue
     StickyCta.vue, ConsentBar.vue
@@ -257,10 +258,12 @@ src/
     posthog.ts                     PostHog EU, cookieless, lazy-loaded slim build
     format.ts, dom.ts
     server/                        Redis, mail, HTTP helpers (API routes only)
-  stores/                        ← state shared between islands (nanostores): "signed up?", calculator values
+  stores/                        ← Pinia stores shared by all islands: lead.ts ("signed up?"), calculator.ts (inputs + result)
+  vue-app.ts                     ← installs ONE Pinia instance into every island (Astro appEntrypoint)
   data/etfs.json + etfs.ts       ← generated data + its TypeScript types
   config.ts                      ← public settings, all from env vars
-  styles/global.css              ← design tokens (colours, fonts) + shared primitives (buttons, chips, cards, live dot)
+  styles/global.css              ← Tailwind entry: design tokens (@theme: colours, fonts, radii) + base element styles
+  styles/effects.css             ← the animated effects as named utilities: comet-border, sheen, live-dot, caret, tape-scroll…
 marketing/                       ← sources for things that aren't the page: ad creatives (HTML), PDF template
 scripts/                         ← fetch-data.mjs (live data), render.mjs (PDF + ad PNGs via headless Chrome)
 tests/unit/                      ← Vitest: calculator + email logic
@@ -270,7 +273,9 @@ public/                          ← served as-is: PDF, ad PNGs, favicon, OG ima
 
 **How to read a page:** open `src/pages/index.astro`. It's the section order, top to bottom. Each section is one file in `components/sections/`. Where a section needs interactivity it embeds a Vue component with a hydration directive: `client:load` (hero: interactive immediately) or `client:visible` (below the fold: loads when scrolled to).
 
-**How islands talk to each other:** each Vue island is a separate app, so shared state lives in [nanostores](https://github.com/nanostores/nanostores) (`src/stores/`), Astro's recommended pattern. When `LeadForm` saves a lead, `$leadId` changes, and `EtfTable` unlocks, the other forms switch to "Tahák už máte ✓", and `StickyCta` hides.
+**How islands talk to each other:** each Vue island is a separate Vue app. They share state through **one Pinia instance**, created in `src/vue-app.ts` and installed into every island via Astro's `appEntrypoint`. When `LeadForm` calls `lead.markLead()`, `EtfTable` unlocks, the other forms switch to "Tahák už máte ✓", and `StickyCta` hides. Stored state (a returning visitor's lead) is applied in `onMounted` via `lead.restore()`, so the server-rendered HTML and the first client render always match.
+
+**Styling:** Tailwind CSS v4. The palette is limited to the brand tokens in `@theme` (`bg-surface`, `text-lime`, `text-coral`, `border-line`, `rounded-card`…; Tailwind's default colours are switched off). Repeated patterns are components (`Btn`, `Chip`, `Section`, `Heading`…), not long copied class strings. Variations are **props**, never extra classes, because two conflicting utilities on one element don't override by order. The few effects utilities can't express (pseudo-element animations) are named utilities in `effects.css`, so the markup just says `class="sheen"`. Tests find elements by `data-testid` and roles, never by styling classes.
 
 **Env vars:** declared and typed in one place, `astro.config.mjs → env.schema` (Astro's `astro:env`). `PUBLIC_*` are inlined into the browser bundle; secrets are read at runtime by the API routes only. See [`.env.example`](.env.example).
 
@@ -282,6 +287,7 @@ public/                          ← served as-is: PDF, ad PNGs, favicon, OG ima
 | `npm run check` | TypeScript + Astro type check |
 | `npm test` | unit tests (Vitest) |
 | `npm run test:e2e` | end-to-end journey (Playwright, uses installed Chrome, starts the dev server itself) |
+| `npm run test:visual` | pixel comparison of 13 page states against a local baseline (`-- -u` to re-record after an intended visual change; local only, as snapshots are OS/font specific) |
 | `npm run build` | production build (`.vercel/output`), then `npm run check:function` |
 | `npm run data` / `npm run render` | refresh data / re-render PDF + ads |
 
@@ -289,7 +295,7 @@ CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tes
 
 **Pinned on purpose:** `@astrojs/vercel` is pinned to `11.0.12`. Version 11.0.13 (released 8 Oct 2026) bundles `import "rolldown"` into the server function, which crashes every API route on Vercel (`FUNCTION_INVOCATION_FAILED`, "Cannot find native binding"). `npm run check:function` (also in CI) fails the build if build tooling ever leaks into the function again. Check before upgrading. **Deploy:** `vercel deploy --prod`, or connect the repo in Vercel for deploy-on-push (Astro is auto-detected).
 
-**Performance:** the first screen is pre-rendered HTML, with no images (all CSS) and fonts with `display=swap`. Page JavaScript is ~45 KB gzipped (~30 KB is the Vue runtime). Below-the-fold islands load only when scrolled to. PostHog (~50 KB gz) loads only after the page is interactive, and never blocks the first screen.
+**Performance:** the first screen is pre-rendered HTML, with no images (all CSS) and fonts with `display=swap`. Page JavaScript is ~53 KB gzipped (~30 KB is the Vue runtime, ~3 KB Pinia); CSS is one ~7 KB file. Below-the-fold islands load only when scrolled to. PostHog (~50 KB gz) loads only after the page is interactive and never blocks the first screen.
 
 **Tests:** the e2e suite checks both ads at phone size:
 - no horizontal scroll

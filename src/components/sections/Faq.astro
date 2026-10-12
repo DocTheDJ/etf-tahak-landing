@@ -1,6 +1,9 @@
 ---
 // The four reasons people hesitate at the form, answered right before the final ask.
 // Native <details>, so it works without JavaScript; opening one is tracked by the script below.
+import Section from "@/components/ui/Section.astro";
+import Heading from "@/components/ui/Heading.astro";
+
 const items = [
   {
     q: "Proč nemůžu koupit VOO přímo?",
@@ -21,15 +24,17 @@ const items = [
 ];
 ---
 
-<section class="sec" id="otazky" data-sec="faq">
-  <h2 class="h2">Na co se lidé ptají</h2>
+<Section id="otazky" track="faq">
+  <Heading>Na co se lidé ptají</Heading>
   {items.map((item, i) => (
-    <details data-faq={i + 1}>
-      <summary>{item.q}</summary>
-      <p>{item.a}</p>
+    <details data-faq={i + 1} class="group border-b border-line first-of-type:border-t">
+      <summary
+        class="relative cursor-pointer list-none py-4 pr-8 text-[17px] font-bold [&::-webkit-details-marker]:hidden after:absolute after:top-[13px] after:right-1 after:font-mono after:text-[20px] after:leading-none after:font-bold after:text-lime after:transition-transform after:duration-200 after:content-['+'] group-open:after:rotate-45"
+      >{item.q}</summary>
+      <p class="mb-4 text-[15.5px] text-fg-2">{item.a}</p>
     </details>
   ))}
-</section>
+</Section>
 
 <script>
   import { track } from "@/lib/tracking";
@@ -39,13 +44,3 @@ const items = [
     });
   });
 </script>
-
-<style>
-details { border-bottom: 1px solid var(--line); }
-  details:first-of-type { border-top: 1px solid var(--line); }
-  summary { cursor: pointer; list-style: none; padding: 16px 32px 16px 0; font-weight: 700; font-size: 17px; position: relative; }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: "+"; position: absolute; right: 4px; top: 13px; font: 700 20px/1 var(--f-mono); color: var(--lime); transition: transform 0.2s ease; }
-  details[open] summary::after { transform: rotate(45deg); }
-  p { margin: 0 0 16px; color: var(--text-2); font-size: 15.5px; }
-</style>

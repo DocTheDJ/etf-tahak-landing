@@ -1,0 +1,10 @@
+---
+// A page section: vertical rhythm + the tracking hook (data-sec → "section_view" event).
+//   first: the hero (less top padding on phones)   last: extra bottom padding before the footer
+interface Props { track: string; id?: string; first?: boolean; last?: boolean }
+const { track, id, first = false, last = false } = Astro.props;
+---
+
+<section id={id} data-sec={track} class:list={[first ? "pt-[18px] md:pt-11" : "pt-8 md:pt-11", last ? "pb-9" : "pb-2"]}>
+  <slot />
+</section>

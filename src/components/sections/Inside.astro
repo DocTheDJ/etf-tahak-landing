@@ -1,57 +1,42 @@
 ---
 // "Co je v taháku": makes the lead magnet concrete before the next ask.
+import Section from "@/components/ui/Section.astro";
+import Heading from "@/components/ui/Heading.astro";
 import { byTicker, etfs } from "@/data/etfs";
 
 const preview = ["VOO", "IVV", "SPY", "VT", "SCHD"].map(byTicker);
+const points = [
+  { title: `${etfs.length} ETF z NYSE vedle sebe.`, text: "Poplatek, výnos za 1, 5 a 10 let, dividenda." },
+  { title: "Evropské dvojče ke každému.", text: "Ticker, ISIN a poplatek. Stačí zkopírovat do aplikace brokera." },
+  { title: "Daně na jedné straně.", text: "Časový test 3 roky, limit 100 000 Kč, formulář W-8BEN a DIP." },
+  { title: "5 kroků k prvnímu nákupu.", text: "Od výběru indexu po trvalý příkaz." },
+];
 ---
 
-<section class="sec" data-sec="inside">
-  <h2 class="h2">Co je v taháku</h2>
-  <div class="grid">
-    <div class="paper" aria-hidden="true">
-      <div class="head"><b>ETF tahák</b> 2026</div>
+<Section track="inside">
+  <Heading>Co je v taháku</Heading>
+  <div class="grid grid-cols-[112px_1fr] items-start gap-5 md:grid-cols-[150px_1fr] md:gap-7">
+    <!-- a mini PDF page, floating -->
+    <div
+      class="relative aspect-[1/1.414] animate-float rounded-[6px] bg-white px-2 py-[9px] font-mono text-[9.5px] leading-[1.4] font-medium text-ink shadow-[0_0_0_1px_var(--color-line),0_18px_40px_rgba(0,0,0,0.5)] [transform:rotate(-4deg)]"
+      aria-hidden="true"
+    >
+      <div class="mb-1.5 border-b border-ink pb-1 font-sans text-[11px] leading-[1.1] font-extrabold"><b>ETF tahák</b> 2026</div>
       {preview.map((e) => (
-        <div class="row"><span>{e.ticker}</span><span>→</span><span class="hl">{e.twin.ticker}</span></div>
+        <div class="grid grid-cols-[1fr_auto_1fr] gap-[3px]"><span>{e.ticker}</span><span>→</span><span class="bg-lime px-0.5 font-bold">{e.twin.ticker}</span></div>
       ))}
-      <div class="lines"><i></i><i></i><i></i><i></i></div>
-      <span class="tag">PDF · 2 strany</span>
+      <div class="mt-2 grid gap-1">
+        <i class="block h-[3px] bg-[#e3e5ea]"></i><i class="block h-[3px] w-4/5 bg-[#e3e5ea]"></i><i class="block h-[3px] bg-[#e3e5ea]"></i><i class="block h-[3px] w-3/5 bg-[#e3e5ea]"></i>
+      </div>
+      <span class="absolute -right-3.5 -bottom-3 rounded-[6px] bg-lime px-[7px] py-[5px] font-mono text-[10px] leading-none font-bold whitespace-nowrap text-ink [transform:rotate(6deg)]">PDF · 2 strany</span>
     </div>
-    <ol>
-      <li><b>{etfs.length} ETF z NYSE vedle sebe.</b> Poplatek, výnos za 1, 5 a 10 let, dividenda.</li>
-      <li><b>Evropské dvojče ke každému.</b> Ticker, ISIN a poplatek. Stačí zkopírovat do aplikace brokera.</li>
-      <li><b>Daně na jedné straně.</b> Časový test 3 roky, limit 100 000 Kč, formulář W-8BEN a DIP.</li>
-      <li><b>5 kroků k prvnímu nákupu.</b> Od výběru indexu po trvalý příkaz.</li>
+    <ol class="grid gap-3.5">
+      {points.map((p, i) => (
+        <li class="relative pl-8 text-[15.5px] leading-[1.45] text-fg-2">
+          <span class="absolute top-0.5 left-0 font-mono text-[12px] leading-none font-bold text-lime" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+          <b class="text-fg">{p.title}</b> {p.text}
+        </li>
+      ))}
     </ol>
   </div>
-</section>
-
-<style>
-.grid { display: grid; grid-template-columns: 112px 1fr; gap: 20px; align-items: start; }
-  @media (min-width: 720px) { .grid { grid-template-columns: 150px 1fr; gap: 28px; } }
-  .paper {
-    background: #ffffff; color: #0e0f12; border-radius: 6px;
-    aspect-ratio: 1 / 1.414; padding: 9px 8px; transform: rotate(-4deg);
-    font: 500 9.5px/1.4 var(--f-mono); position: relative;
-    box-shadow: 0 0 0 1px var(--line), 0 18px 40px rgba(0, 0, 0, 0.5);
-    animation: float 4s ease-in-out infinite;
-  }
-  .head { font: 800 11px/1.1 var(--f-sans); margin-bottom: 6px; border-bottom: 1px solid #0e0f12; padding-bottom: 4px; }
-  .row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3px; }
-  .hl { background: var(--lime); font-weight: 700; padding: 0 2px; }
-  .lines { margin-top: 8px; display: grid; gap: 4px; }
-  .lines i { display: block; height: 3px; background: #e3e5ea; }
-  .lines i:nth-child(2) { width: 80%; }
-  .lines i:nth-child(4) { width: 60%; }
-  .tag {
-    position: absolute; bottom: -12px; right: -14px; transform: rotate(6deg);
-    background: var(--lime); color: var(--lime-ink); font: 700 10px/1 var(--f-mono); padding: 5px 7px; border-radius: 6px; white-space: nowrap;
-  }
-  ol { margin: 0; padding: 0; list-style: none; counter-reset: i; display: grid; gap: 14px; }
-  li { counter-increment: i; position: relative; padding-left: 32px; font-size: 15.5px; line-height: 1.45; color: var(--text-2); }
-  li b { color: var(--text); }
-  li::before {
-    content: counter(i, decimal-leading-zero); position: absolute; left: 0; top: 2px;
-    font: 700 12px/1 var(--f-mono); color: var(--lime);
-  }
-  @keyframes float { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(-3deg) translateY(-5px); } }
-</style>
+</Section>

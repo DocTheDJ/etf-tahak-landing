@@ -8,3 +8,6 @@ test-results/
 playwright-report/
 *.log
 .DS_Store
+
+# local visual-regression baselines (OS/font specific)
+tests/visual/__snapshots__/

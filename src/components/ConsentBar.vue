@@ -19,25 +19,16 @@ function choose(choice: "all" | "none") {
 </script>
 
 <template>
-  <div v-if="open" class="consent" role="region" aria-label="Cookies">
-    <p>Pro měření reklam používáme cookies {{ tools }}<template v-if="replay"> a anonymní záznam návštěvy</template>. <a href="/ochrana-udaju">Víc</a></p>
-    <div>
-      <button type="button" class="yes" @click="choose('all')">Souhlasím</button>
-      <button type="button" @click="choose('none')">Jen nezbytné</button>
+  <div
+    v-if="open"
+    class="fixed inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-[calc(var(--container-col)-24px)] flex-wrap items-center gap-x-3 gap-y-2 rounded-ctl border border-line bg-surface px-3.5 py-3 text-[14px] text-fg shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
+    role="region"
+    aria-label="Cookies"
+  >
+    <p class="flex-[1_1_200px] [&_a]:text-lime">Pro měření reklam používáme cookies {{ tools }}<template v-if="replay"> a anonymní záznam návštěvy</template>. <a href="/ochrana-udaju">Víc</a></p>
+    <div class="flex gap-2">
+      <button type="button" class="min-h-11 cursor-pointer rounded-[10px] border border-lime bg-lime px-3 font-sans text-[14px] leading-none font-bold text-ink" @click="choose('all')">Souhlasím</button>
+      <button type="button" class="min-h-11 cursor-pointer rounded-[10px] border border-line bg-transparent px-3 font-sans text-[14px] leading-none font-bold text-fg" @click="choose('none')">Jen nezbytné</button>
     </div>
   </div>
 </template>
-
-<style scoped>
-.consent {
-  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 30;
-  max-width: calc(var(--col) - 24px); margin: 0 auto;
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  padding: 12px 14px; font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; color: var(--text);
-}
-p { margin: 0; flex: 1 1 200px; }
-a { color: var(--lime); }
-div { display: flex; gap: 8px; }
-button { min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; font: 700 14px/1 var(--f-sans); cursor: pointer; background: transparent; color: var(--text); }
-.yes { background: var(--lime); border-color: var(--lime); color: var(--lime-ink); }
-</style>

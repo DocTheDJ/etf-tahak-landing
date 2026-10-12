@@ -3,24 +3,23 @@
 // the calculator already showing the ad's example, and the email form right under the result.
 import Calculator from "@/components/Calculator.vue";
 import LeadForm from "@/components/LeadForm.vue";
+import Section from "@/components/ui/Section.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Heading from "@/components/ui/Heading.astro";
+import Lede from "@/components/ui/Lede.astro";
 import { CALC_ETF } from "@/data/etfs";
 import { pct } from "@/lib/format";
 import { ESMA_FUND_COST } from "@/lib/calc";
 ---
 
-<section class="sec sec--first" data-sec="calculator">
-  <p class="eyebrow">Kalkulačka / 10 vteřin</p>
-  <h1 class="h1">Kolik vám <span class="t-lime">sežerou</span> <span class="t-coral">poplatky?</span></h1>
-  <p class="lede">
+<Section track="calculator" first>
+  <Eyebrow>Kalkulačka / 10 vteřin</Eyebrow>
+  <Heading level={1}>Kolik vám <span class="text-lime">sežerou</span> <span class="text-coral">poplatky?</span></Heading>
+  <Lede>
     Průměrný fond v EU stojí <b>{pct(ESMA_FUND_COST, 1)} ročně</b>, ETF na S&amp;P 500 od <b>0,03 %</b>. Rozdíl vypadá malý. Není.
-  </p>
+  </Lede>
 
   <Calculator client:load etfTicker={CALC_ETF.ticker} etfFee={CALC_ETF.ter} />
 
-  <LeadForm
-    client:load
-    loc="calculator"
-    label="Tahák s 12 ETF, se kterými si ten rozdíl necháte"
-    button="Chci tahák →"
-  />
-</section>
+  <LeadForm client:load loc="calculator" label="Tahák s 12 ETF, se kterými si ten rozdíl necháte" button="Chci tahák →" />
+</Section>

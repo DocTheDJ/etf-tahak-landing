@@ -1,0 +1,18 @@
+---
+// Page headings. level = the HTML tag (h1/h2); size = how it looks (xl = hero headline, lg = section heading).
+interface Props { level?: 1 | 2; size?: "xl" | "lg"; class?: string }
+const { level = 2, size = level === 1 ? "xl" : "lg", class: extra } = Astro.props;
+const Tag = level === 1 ? "h1" : "h2";
+---
+
+<Tag
+  class:list={[
+    "font-extrabold text-balance",
+    size === "xl"
+      ? "mb-3.5 text-[clamp(38px,10.9vw,60px)] leading-[0.98] tracking-[-0.035em]"
+      : "mb-3 text-[clamp(28px,8vw,40px)] leading-[1.02] tracking-[-0.03em]",
+    extra,
+  ]}
+>
+  <slot />
+</Tag>

@@ -2,6 +2,7 @@
 import { defineConfig, envField } from "astro/config";
 import vue from "@astrojs/vue";
 import vercel from "@astrojs/vercel";
+import tailwindcss from "@tailwindcss/vite";
 
 const optional = { optional: true, default: "" };
 
@@ -9,12 +10,14 @@ const optional = { optional: true, default: "" };
 // Only src/pages/api/* opt out with `export const prerender = false` and run as Vercel functions.
 export default defineConfig({
   site: "https://etf-tahak-landing.vercel.app",
-  integrations: [vue()],
+  // appEntrypoint installs one shared Pinia instance into every Vue island (src/vue-app.ts)
+  integrations: [vue({ appEntrypoint: "/src/vue-app" })],
   adapter: vercel(),
   devToolbar: { enabled: false },
 
   // Local mirror of the PostHog reverse proxy in vercel.json (same path, EU Cloud), so dev behaves like production.
   vite: {
+    plugins: [tailwindcss()],
     server: {
       proxy: {
         "/rq7/static": { target: "https://eu-assets.i.posthog.com", changeOrigin: true, rewrite: (p) => p.slice("/rq7".length) },

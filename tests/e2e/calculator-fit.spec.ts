@@ -11,13 +11,13 @@ async function setWorstCase(page: Page) {
   await page.getByRole("button", { name: "20 000", exact: true }).click();
   await page.getByRole("button", { name: "30 let", exact: true }).click();
   await page.locator("#fee").fill("3"); // slider maximum → −9 384 000 Kč, the longest result
-  await expect(page.locator(".big")).toHaveText(/−9\s384\s000\sKč/);
+  await expect(page.getByTestId("loss")).toHaveText(/−9\s384\s000\sKč/);
 }
 
 /** One line and inside its box: height of a single line, no horizontal overflow. */
-async function assertFits(page: Page, selector: string, box: string) {
-  const m = await page.evaluate(([sel, boxSel]) => {
-    const el = document.querySelector(sel) as HTMLElement;
+async function assertFits(page: Page, selector: string, box: string, index = 0) {
+  const m = await page.evaluate(([sel, boxSel, i]) => {
+    const el = document.querySelectorAll(sel)[i] as HTMLElement;
     const container = el.closest(boxSel) as HTMLElement;
     const r = el.getBoundingClientRect();
     const c = container.getBoundingClientRect();
@@ -25,7 +25,7 @@ async function assertFits(page: Page, selector: string, box: string) {
     range.selectNodeContents(el);
     const lines = new Set([...range.getClientRects()].map((x) => Math.round(x.top))).size;
     return { lines, right: Math.max(r.right, range.getBoundingClientRect().right), boxRight: c.right, overflow: el.scrollWidth - el.clientWidth };
-  }, [selector, box] as const);
+  }, [selector, box, index] as const);
   expect(m.lines, `${selector} wraps onto ${m.lines} lines`).toBe(1);
   expect(m.overflow, `${selector} overflows its own box`).toBeLessThanOrEqual(0);
   expect(m.right, `${selector} sticks out of ${box}`).toBeLessThanOrEqual(m.boxRight + 0.5);
@@ -35,9 +35,9 @@ for (const width of WIDTHS) {
   test(`calculator result stays on one line at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
-    await assertFits(page, ".big", ".result"); // default value
+    await assertFits(page, '[data-testid="loss"]', '[data-testid="calc-result"]'); // default value
     await setWorstCase(page);
-    await assertFits(page, ".big", ".result");
-    for (const i of [1, 2]) await assertFits(page, `.bar:nth-child(${i}) .val`, ".result");
+    await assertFits(page, '[data-testid="loss"]', '[data-testid="calc-result"]');
+    for (const i of [0, 1]) await assertFits(page, '[data-testid="bar-value"]', '[data-testid="calc-result"]', i);
   });
 }

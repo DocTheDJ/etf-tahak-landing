@@ -2,12 +2,13 @@
 // Bottom bar on mobile: appears after the first screen, hides whenever a lead form is on screen
 // (no point pointing at a form the visitor can already see), and disappears for good after sign-up.
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { useStore } from "@nanostores/vue";
+import { storeToRefs } from "pinia";
 import { track } from "@/lib/tracking";
 import { focusLeadForm } from "@/lib/dom";
-import { $leadId } from "@/stores/lead";
+import { useLeadStore } from "@/stores/lead";
 
-const leadId = useStore($leadId);
+const lead = useLeadStore();
+const { leadId } = storeToRefs(lead);
 const pastFold = ref(false);
 const formsInView = ref(0);
 const show = computed(() => pastFold.value && formsInView.value === 0 && !leadId.value);
@@ -20,6 +21,7 @@ const onScroll = () => {
 };
 
 onMounted(() => {
+  lead.restore();
   addEventListener("scroll", onScroll, { passive: true });
   io = new IntersectionObserver((entries) => {
     for (const e of entries) e.isIntersecting ? inView.add(e.target) : inView.delete(e.target);
@@ -39,22 +41,15 @@ function go() {
 </script>
 
 <template>
-  <button type="button" class="sticky" :class="{ shown: show }" :aria-hidden="!show" :tabindex="show ? 0 : -1" @click="go">
-    <span>Tahák s 12 dvojčaty</span><b>Chci ho →</b>
+  <button
+    type="button"
+    data-testid="sticky-cta"
+    class="fixed inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] z-20 mx-auto flex min-h-14 max-w-[calc(var(--container-col)-24px)] cursor-pointer appearance-none items-center justify-between gap-2.5 rounded-ctl border-0 bg-lime px-[18px] font-sans text-[16px] leading-none font-bold text-ink shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-transform duration-250 ease-[ease]"
+    :class="show ? 'translate-y-0' : 'translate-y-[140%]'"
+    :aria-hidden="!show"
+    :tabindex="show ? 0 : -1"
+    @click="go"
+  >
+    <span>Tahák s 12 dvojčaty</span><b class="font-extrabold">Chci ho →</b>
   </button>
 </template>
-
-<style scoped>
-.sticky {
-  -webkit-appearance: none; appearance: none; cursor: pointer;
-  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 20;
-  max-width: calc(var(--col) - 24px); margin: 0 auto;
-  display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  min-height: 56px; padding: 0 18px; border: 0; border-radius: var(--r);
-  background: var(--lime); color: var(--lime-ink); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  font: 700 16px/1 var(--f-sans);
-  transform: translateY(140%); transition: transform 0.25s ease;
-}
-.sticky b { font-weight: 800; }
-.shown { transform: none; }
-</style>

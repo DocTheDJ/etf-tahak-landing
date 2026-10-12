@@ -95,3 +95,9 @@ All motion is CSS and stops for visitors with "reduce motion" enabled.
 ## Fifth iteration: PostHog
 
 PostHog EU Cloud in cookieless mode (no banner, daily-rotating server-side hash, nothing on the device), proxied through our own domain (`/rq7`), loaded after the page is interactive using the slim build. All existing `track()` events flow into it with the ad context attached, so funnels and breakdowns by creative need no extra code. The own Redis funnel stays as a backup and as a way to measure how much ad blockers hide. Session replay only after cookie consent. Setup and the insights to create are in README §8.
+
+## Sixth iteration: Tailwind + Pinia
+
+The scoped CSS blocks were hard to follow, so styling moved to **Tailwind v4** utilities in the markup, with brand-only design tokens and small UI components (`Btn`, `Chip`, `Section`, `Heading`…). Shared state moved from nanostores to **Pinia**, with one instance shared across islands through Astro's `appEntrypoint`.
+
+The requirement was "same visuals, same function", so before touching anything I recorded **pixel baselines of 13 states** (both pages at phone and desktop width, privacy page, calculator worst case, form error and typo states, sorted and filtered table, open FAQ, thank-you and opt-in, returning visitor, sticky bar). After the refactor all of them match (`npm run test:visual`, 3/3 runs), and the full functional suite passes. Two real 1–2 px differences were found and fixed along the way: list margins that came from browser defaults (`1em`), and a padding value.

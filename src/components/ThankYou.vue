@@ -6,6 +6,8 @@ import { onMounted, ref } from "vue";
 import { config } from "@/config";
 import { track } from "@/lib/tracking";
 import { CURRENT_CONSENT } from "@/lib/consent";
+import Btn from "./ui/Btn.vue";
+import Chip from "./ui/Chip.vue";
 
 const props = defineProps<{ email: string; emailed: boolean; leadId: string }>();
 
@@ -68,66 +70,56 @@ const whatsapp = () =>
 </script>
 
 <template>
-  <div ref="panel" class="done" tabindex="-1">
-    <p class="kicker"><span class="live-dot"></span>HOTOVO</p>
-    <p class="title">Tahák je váš.</p>
-    <a class="btn btn--primary btn--block" :href="config.pdfUrl" download @click="track('pdf_download', { from: 'done' })">
+  <!-- scroll-mt clears the sticky ticker when the panel scrolls into view -->
+  <div
+    ref="panel"
+    class="scroll-mt-14 animate-rise rounded-card border border-lime bg-surface px-4 py-[18px] outline-none"
+    tabindex="-1"
+    data-testid="thank-you"
+  >
+    <p class="flex items-center gap-2 font-mono text-[12px] leading-none font-bold tracking-[0.08em] text-lime"><span class="live-dot"></span>HOTOVO</p>
+    <p class="mt-2 mb-3.5 text-[32px] leading-none font-extrabold tracking-[-0.03em]">Tahák je váš.</p>
+    <Btn :href="config.pdfUrl" variant="primary" block download @click="track('pdf_download', { from: 'done' })">
       Stáhnout tahák (PDF, 2 strany)
-    </a>
-    <p class="note">
+    </Btn>
+    <p class="mt-2.5 text-[14px] text-fg-2">
       <template v-if="emailed">Kopie míří na {{ email }}. Kdyby nedorazila, mrkněte do složky Hromadné nebo Spam.</template>
       <template v-else>Odkaz na tahák vám pošleme i na {{ email }}.</template>
     </p>
-    <p class="note">Všechna dvojčata ve srovnání jsou teď odemčená. <a href="#srovnani">Ukázat</a></p>
+    <p class="mt-2.5 text-[14px] text-fg-2 [&_a]:text-lime">Všechna dvojčata ve srovnání jsou teď odemčená. <a href="#srovnani">Ukázat</a></p>
 
-    <div class="block optin" :class="{ 'optin--open': optin === 'open' || optin === 'error' }">
-      <template v-if="optin === 'open' || optin === 'error'">
-        <p class="q">Chcete k taháku i 4 krátké tipy e-mailem?</p>
-        <p class="consent">{{ CURRENT_CONSENT.text }} <a href="/ochrana-udaju">Ochrana osobních údajů</a></p>
-        <div class="optin__actions">
-          <button type="button" class="btn btn--primary" @click="giveConsent">Ano, chci tipy</button>
-          <button type="button" class="link" @click="declineConsent">Ne, stačí mi PDF</button>
-        </div>
-        <p v-if="optin === 'error'" class="err" role="alert">Souhlas se nepodařilo uložit. Zkuste to prosím znovu.</p>
-      </template>
-      <p v-else-if="optin === 'yes'" class="thanks">Díky! První tip dorazí do pár dní. Odhlásit se můžete v každém e-mailu.</p>
-      <p v-else class="muted">Dobře, žádné další e-maily. Tahák už máte.</p>
+    <!-- marketing consent: its own boxed block while the question is open -->
+    <div
+      v-if="optin === 'open' || optin === 'error'"
+      class="mt-4 rounded-ctl border border-line bg-surface-2 p-3.5"
+    >
+      <p class="mb-2.5 text-[15px] font-bold">Chcete k taháku i 4 krátké tipy e-mailem?</p>
+      <p class="mb-3 text-[13px] leading-[1.45] text-fg-2 [&_a]:text-lime">{{ CURRENT_CONSENT.text }} <a href="/ochrana-udaju">Ochrana osobních údajů</a></p>
+      <div class="flex flex-wrap items-center gap-3.5">
+        <Btn variant="primary" size="sm" @click="giveConsent">Ano, chci tipy</Btn>
+        <button type="button" class="cursor-pointer px-0.5 py-1 text-muted underline underline-offset-3" @click="declineConsent">Ne, stačí mi PDF</button>
+      </div>
+      <p v-if="optin === 'error'" class="mt-2.5 text-[14px] font-semibold text-coral" role="alert">Souhlas se nepodařilo uložit. Zkuste to prosím znovu.</p>
+    </div>
+    <div v-else class="mt-[18px] border-t border-dashed border-line pt-3.5">
+      <p v-if="optin === 'yes'" class="font-bold text-lime">Díky! První tip dorazí do pár dní. Odhlásit se můžete v každém e-mailu.</p>
+      <p v-else class="text-[14px] text-muted">Dobře, žádné další e-maily. Tahák už máte.</p>
     </div>
 
-    <div class="block">
+    <div class="mt-[18px] border-t border-dashed border-line pt-3.5">
       <template v-if="!answered">
-        <p class="q">Ještě jedna věc, nepovinně: kolik měsíčně chcete investovat?</p>
-        <div class="chips">
-          <button v-for="a in ANSWERS" :key="a.id" type="button" class="chip" @click="answer(a.id)">{{ a.label }}</button>
+        <p class="mb-2.5 text-[15px] font-bold">Ještě jedna věc, nepovinně: kolik měsíčně chcete investovat?</p>
+        <div class="flex flex-wrap gap-1.5">
+          <Chip v-for="a in ANSWERS" :key="a.id" @click="answer(a.id)">{{ a.label }}</Chip>
         </div>
       </template>
-      <p v-else class="thanks">Díky! Pomůže nám to tahák vylepšovat.</p>
+      <p v-else class="font-bold text-lime">Díky! Pomůže nám to tahák vylepšovat.</p>
     </div>
 
-    <div class="block share">
-      <p class="q">Znáte někoho, kdo platí bance 2 % ročně?</p>
-      <a class="btn btn--ghost" :href="whatsapp()" target="_blank" rel="noopener" @click="track('share', { channel: 'whatsapp' })">Poslat přes WhatsApp</a>
-      <button type="button" class="btn btn--ghost" @click="copyLink">{{ copied ? "Zkopírováno ✓" : "Zkopírovat odkaz" }}</button>
+    <div class="mt-[18px] flex flex-wrap gap-2 border-t border-dashed border-line pt-3.5">
+      <p class="mb-1 w-full text-[15px] font-bold">Znáte někoho, kdo platí bance 2 % ročně?</p>
+      <Btn :href="whatsapp()" variant="ghost" target="_blank" rel="noopener" @click="track('share', { channel: 'whatsapp' })">Poslat přes WhatsApp</Btn>
+      <Btn variant="ghost" @click="copyLink">{{ copied ? "Zkopírováno ✓" : "Zkopírovat odkaz" }}</Btn>
     </div>
   </div>
 </template>
-
-<style scoped>
-.done { background: var(--surface); border: 1px solid var(--lime); border-radius: var(--r-lg); padding: 18px 16px; outline: none; animation: rise 0.35s ease-out both; scroll-margin-top: 56px; /* clear the sticky ticker */ }
-.kicker { display: flex; align-items: center; gap: 8px; font: 700 12px/1 var(--f-mono); letter-spacing: 0.08em; color: var(--lime); margin: 0; }
-.title { font-weight: 800; font-size: 32px; letter-spacing: -0.03em; line-height: 1; margin: 8px 0 14px; }
-.note { font-size: 14px; color: var(--text-2); margin: 10px 0 0; }
-.note a { color: var(--lime); }
-.block { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
-.q { font-weight: 700; margin: 0 0 10px; font-size: 15px; }
-.thanks { font-weight: 700; color: var(--lime); margin: 0; }
-.optin--open { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; margin-top: 16px; }
-.consent { font-size: 13px; line-height: 1.45; color: var(--text-2); margin: 0 0 12px; }
-.consent a { color: var(--lime); }
-.optin__actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.optin__actions .btn { min-height: 46px; font-size: 15px; }
-.muted { color: var(--muted); margin: 0; font-size: 14px; }
-.err { color: var(--coral); font-weight: 600; font-size: 14px; margin: 10px 0 0; }
-.share { display: flex; flex-wrap: wrap; gap: 8px; }
-.share .q { width: 100%; margin-bottom: 4px; }
-</style>
