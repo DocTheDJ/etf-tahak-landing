@@ -288,6 +288,7 @@ public/                          ← served as-is: PDF, ad PNGs, favicon, OG ima
 | `npm test` | unit tests (Vitest) |
 | `npm run test:e2e` | end-to-end journey (Playwright, uses installed Chrome, starts the dev server itself) |
 | `npm run test:visual` | pixel comparison of 13 page states against a local baseline (`-- -u` to re-record after an intended visual change; local only, as snapshots are OS/font specific) |
+| `npm run test:browsers` | screenshots and layout checks in Chromium, WebKit (iPhone), Firefox and a Samsung Internet profile with forced dark mode, run in Playwright's Linux Docker image (`BASE_URL=https://… npm run test:browsers`; screenshots in `test-results/browsers/`) |
 | `npm run build` | production build (`.vercel/output`), then `npm run check:function` |
 | `npm run data` / `npm run render` | refresh data / re-render PDF + ads |
 

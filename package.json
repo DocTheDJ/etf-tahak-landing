@@ -16,11 +16,14 @@
     "data": "node scripts/fetch-data.mjs",
     "render": "node scripts/render.mjs",
     "check:function": "node scripts/check-function.mjs",
-    "test:visual": "playwright test -c playwright.visual.config.ts"
+    "test:visual": "playwright test -c playwright.visual.config.ts",
+    "test:browsers": "bash scripts/test-browsers.sh"
   },
   "dependencies": {
     "@astrojs/vercel": "11.0.12",
     "@astrojs/vue": "^7.0.3",
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@tailwindcss/vite": "4.3.3",
     "astro": "^7.3.8",
     "pinia": "4.0.3",

@@ -28,8 +28,8 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --font-sans: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-sans: "Bricolage Grotesque Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --radius-ctl: 14px; /* inputs, buttons */
   --radius-card: 18px; /* cards, panels */
