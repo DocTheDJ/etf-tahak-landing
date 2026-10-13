@@ -2,7 +2,7 @@
 
 A lead-magnet landing page that compares **12 NYSE-listed ETFs** for **Czech retail investors arriving from a mobile ad**. In exchange for an email, visitors get a 2-page cheat sheet ("tahák") that maps every US ETF to the European twin they can actually buy.
 
-**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [`/` fees (ad A)](https://etf-tahak-landing.vercel.app/) · [`/dvojcata` twins (ad B)](https://etf-tahak-landing.vercel.app/dvojcata) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md) · **Code tour:** [§12](#12-tech-astro--vue--tailwind--pinia) · The site itself is meant to be used from a phone, so on a computer it looks rather odd but it still works, and a desktop version would be added, however the case scenario described navigation from mobile advertisement
+**Live:** https://etf-tahak-landing.vercel.app · **Variants:** [`/` fees (ad A)](https://etf-tahak-landing.vercel.app/) · [`/dvojcata` twins (ad B)](https://etf-tahak-landing.vercel.app/dvojcata) · **Lead magnet:** [`etf-tahak-2026.pdf`](public/tahak/etf-tahak-2026.pdf) · **Plan as agreed:** [`docs/PLAN.md`](docs/PLAN.md) · **How I worked with AI:** [`docs/HOW-I-WORK-WITH-AI.md`](docs/HOW-I-WORK-WITH-AI.md) · **Code tour:** [§12](#12-tech-astro--vue--tailwind--pinia) · The site itself is meant to be used from a phone, so on a computer it looks rather odd but it still works, and a desktop version would be added, however the case scenario described navigation from mobile advertisement
 
 ![First screen of both variants](docs/img/first-screen-both-variants.png)
 
@@ -311,6 +311,10 @@ CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs check, unit tes
 - returning visitors aren't asked again
 - the lead API rejects bad input
 - no JS errors and no Vue hydration mismatches
+
+## 13. How I worked with AI
+
+The whole project was built with Claude Code. In [`docs/HOW-I-WORK-WITH-AI.md`](docs/HOW-I-WORK-WITH-AI.md) I describe what instructions the agent got, how I checked its output and where it got things wrong. The full conversation exports are in [`ai-log/`](ai-log).
 
 ## Honest limitations
 
